@@ -5,6 +5,8 @@ We decided to help them by building a system managing their Rusty Rockets and hu
 
 Innymi słowy, tworzymy prostą aplikację webową używając frameworka [Rocket](https://rocket.rs/) w języku [Rust](https://www.rust-lang.org/), podpartą systemem bazodanowym [MongoDB](https://www.mongodb.com/).
 
+![Project logo](logo.png)
+
 > That's one small step for students, one giant leap for crabkind.
 
 ~ Wojciech Dąbek i Ida Ciepiela 2024
