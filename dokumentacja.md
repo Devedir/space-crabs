@@ -66,7 +66,7 @@ Dodatkowo w zależności od tego jaką rolę będzie miał użytkownik takie dod
 
 Dany użytkownik może więcej niż jedną rolę.
 
-Przykładowe dokumenty z kolekcji _users_
+Przykładowe dokumenty z kolekcji _users_:
 
 
 ```json
@@ -204,7 +204,7 @@ Każdy z dokumentów zawiera następujące pola:
 - [price] - cena ekspedycji
 
 
-
+Przykładowe dokumenty z kolekcji _expeditions_:
 
 ```json
 {
