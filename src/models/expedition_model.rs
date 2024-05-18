@@ -6,7 +6,7 @@ pub struct Expedition {
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
     pub id: Option<ObjectId>,
     pub name: String,
-    pub stops: Vec<Stop>,
+    pub stops: Vec<String>,
     pub max_no_participants: i64,
     pub guide: Guide,
     pub organizer: Organizer,
@@ -15,13 +15,6 @@ pub struct Expedition {
     pub home_station: String,
     pub participants: Vec<Participant>,
     pub price: i64,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Stop {
-    pub name: String,
-    pub arrival_time: i64,
-    pub departure_time: i64,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -34,7 +27,6 @@ pub struct Guide {
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Organizer {
-    #[serde(rename = "org_id")]
     pub org_id: String,
     pub name: String,
 }
