@@ -8,9 +8,11 @@ use mongodb::{
     sync::{Client, Collection},
 };
 use crate::models::expedition_model::Expedition;
+use crate::models::user_model::User;
 
 pub struct MongoRepo {
-    col: Collection<Expedition>,
+    expedition_col: Collection<Expedition>,
+    user_col:Collection<User>,
 }
 
 impl MongoRepo {
@@ -22,8 +24,9 @@ impl MongoRepo {
         };
         let client = Client::with_uri_str(uri).unwrap();
         let db = client.database("space-crabs");
-        let col: Collection<Expedition> = db.collection("expeditions");
-        MongoRepo { col }
+        let expedition_col: Collection<Expedition> = db.collection("expeditions");
+        let user_col:Collection<User> = db.collection("users");
+        MongoRepo { expedition_col,user_col }
     }
 
     pub fn create_expedition(&self, new_expedition: Expedition) -> Result<InsertOneResult, Error> {
@@ -43,7 +46,7 @@ impl MongoRepo {
         };
 
         let expedition = self
-            .col
+            .expedition_col
             .insert_one(new_doc, None)
             .ok()
             .expect("Error creating expedition");
@@ -54,7 +57,7 @@ impl MongoRepo {
         let obj_id = ObjectId::parse_str(id).unwrap();
         let filter = doc! {"_id": obj_id};
         let expedition_detail = self
-            .col
+            .expedition_col
             .find_one(filter, None)
             .ok()
             .expect("Error getting expeditions's detail");
@@ -93,7 +96,7 @@ impl MongoRepo {
         let obj_id = ObjectId::parse_str(id).unwrap();
         let filter = doc! {"_id": obj_id};
         let expedition_detail = self
-            .col
+            .expedition_col
             .delete_one(filter, None)
             .ok()
             .expect("Error deleting expedition");
@@ -102,11 +105,66 @@ impl MongoRepo {
 
     pub fn get_all_expeditions(&self) -> Result<Vec<Expedition>, Error> {
         let cursors = self
-            .col
+            .expedition_col
             .find(None, None)
             .ok()
             .expect("Error getting list of expeditions");
         let expeditions = cursors.map(|doc| doc.unwrap()).collect();
         Ok(expeditions)
+    }
+
+    pub fn create_user(&self, new_user: User) -> Result<InsertOneResult, Error> {
+
+        let new_doc = User {
+            id:None, //mongoDB will create unique id
+            login: new_user.login,
+            password:new_user.password,
+            role:new_user.role,
+            firstname:new_user.firstname,
+            lastname:new_user.lastname,
+            company_name:new_user.company_name,
+            my_expeditions:new_user.my_expeditions,
+            organized_expeditions:new_user.organized_expeditions,
+            contact:new_user.contact,
+        };
+
+        let user = self
+            .user_col
+            .insert_one(new_doc, None)
+            .ok()
+            .expect("Error creating user");
+        Ok(user)
+    }
+
+    pub fn get_user(&self, id: &String) -> Result<User, Error> {
+        let obj_id = ObjectId::parse_str(id).unwrap();
+        let filter = doc! {"_id": obj_id};
+        let user_detail = self
+            .user_col
+            .find_one(filter, None)
+            .ok()
+            .expect("Error getting user's detail");
+        Ok(user_detail.unwrap())
+    }
+
+    pub fn delete_user(&self, id: &String) -> Result<DeleteResult, Error> {
+        let obj_id = ObjectId::parse_str(id).unwrap();
+        let filter = doc! {"_id": obj_id};
+        let user_detail = self
+            .user_col
+            .delete_one(filter, None)
+            .ok()
+            .expect("Error deleting user");
+        Ok(user_detail)
+    }
+
+    pub fn get_all_users(&self) -> Result<Vec<User>, Error> {
+        let cursors = self
+            .user_col
+            .find(None, None)
+            .ok()
+            .expect("Error getting list of users");
+        let user = cursors.map(|doc| doc.unwrap()).collect();
+        Ok(user)
     }
 }
