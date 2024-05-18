@@ -1,4 +1,11 @@
+mod api;
+mod models;
+mod repository;
+
 #[macro_use] extern crate rocket;
+
+use api::expedition_api::{create_expedition,get_expedition,delete_expedition,get_all_expeditions};
+use repository::mongodb_repo::MongoRepo;
 
 #[get("/")]
 fn index() -> &'static str {
@@ -7,5 +14,14 @@ fn index() -> &'static str {
 
 #[launch]
 fn rocket() -> _ {
-    rocket::build().mount("/", routes![index])
+    let db = MongoRepo::init();
+
+    rocket::build()
+        .manage(db)
+        .mount("/", routes![index])
+        .mount("/", routes![create_expedition])
+        .mount("/", routes![get_expedition])
+        // .mount("/",routes![update_expedition])
+        .mount("/",routes![delete_expedition])
+        .mount("/", routes![get_all_expeditions])
 }
