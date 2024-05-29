@@ -7,7 +7,7 @@ use mongodb::{
     results::{InsertOneResult,UpdateResult,DeleteResult},
     sync::{Client, Collection},
 };
-use crate::models::expedition_model::Expedition;
+use crate::{api::expedition_api::get_expedition, models::expedition_model::Expedition};
 use crate::models::user_model::User;
 
 pub struct MongoRepo {
@@ -64,33 +64,43 @@ impl MongoRepo {
         Ok(expedition_detail.unwrap())
     }
 
-//trzeba lepiej obsługiwać nested dokumenty
+    pub fn add_expedition_to_user(&self,user_id:&String,expedition_id:&String) -> Result<UpdateResult,Error>{
+        let user_id = ObjectId::parse_str(user_id).unwrap();
+        let filter = doc!{"_id":user_id};
+    }
 
-    // pub fn update_expedition(&self, id: &String, updated_expedition: Expedition) -> Result<UpdateResult, Error> {
-    //     let obj_id = ObjectId::parse_str(id).unwrap();
-    //     let filter = doc! {"_id": obj_id};
-    //     let new_doc = doc! {
-    //         "$set":
-    //             {
-    //                 "name": updated_expedition.name,
-    //                 "stops": updated_expedition.stops,
-    //                 "max_no_participants": updated_expedition.max_no_participants,
-    //                 "guide": updated_expedition.guide,
-    //                 "organizer": updated_expedition.organizer,
-    //                 "start_time": updated_expedition.start_time,
-    //                 "end_time": updated_expedition.end_time,
-    //                 "home_station": updated_expedition.home_station,
-    //                 "participants": updated_expedition.participants,
-    //                 "price": updated_expedition.price,
-    //             },
-    //     };
-    //     let updated_doc = self
-    //         .col
-    //         .update_one(filter, new_doc, None)
-    //         .ok()
-    //         .expect("Error updating expedition");
-    //     Ok(updated_doc)
-    // }
+
+    pub fn update_expedition(&self, id: &String, updated_expedition: Expedition) -> Result<UpdateResult, Error> {
+        let obj_id = ObjectId::parse_str(id).unwrap();
+        let filter = doc! {"_id": obj_id};
+        let new_doc = doc! {
+            "$set":
+                {
+                    "name": updated_expedition.name,
+                    "stops": updated_expedition.stops,
+                    "max_no_participants": updated_expedition.max_no_participants,
+                    "guide": {
+                        "firstaname":updated_expedition.guide.firstname,
+                        "lastname":updated_expedition.guide.lastname,
+                        "age":updated_expedition.guide.age,
+                        "experience":updated_expedition.guide.experience,},
+                    "organizer": {
+                        "org_id":updated_expedition.organizer.org_id,
+                        "name":updated_expedition.organizer.name,
+                    },
+                    "start_time": updated_expedition.start_time,
+                    "end_time": updated_expedition.end_time,
+                    "home_station": updated_expedition.home_station,
+                    "price": updated_expedition.price,
+                },
+        };
+        let updated_doc = self
+            .expedition_col
+            .update_one(filter, new_doc, None)
+            .ok()
+            .expect("Error updating expedition");
+        Ok(updated_doc)
+    }
 
     pub fn delete_expedition(&self, id: &String) -> Result<DeleteResult, Error> {
         let obj_id = ObjectId::parse_str(id).unwrap();
