@@ -63,10 +63,35 @@ impl MongoRepo {
             .expect("Error getting expeditions's detail");
         Ok(expedition_detail.unwrap())
     }
-
+    //TODO add exp to usr
     pub fn add_expedition_to_user(&self,user_id:&String,expedition_id:&String) -> Result<UpdateResult,Error>{
+        
+        let expedition_detail = self.get_expedition(expedition_id);
+        match expedition_detail {
+            Ok(expedition) => Ok(Json(expedition)),
+            Err(_) => Err(Status::InternalServerError),
+        }
+        let user_detail = self.get_user(user_id);
+
+
+        let new_user_doc = doc!{
+            "$push":{
+                "my_expeditions": {
+                    {
+                        "exp_id": expedition_id,
+                        "name": expedition_detail.,
+                        "start_date": 2122,
+                        "reserved": false,
+                        "paid": false
+                      }
+                }
+            }
+        };
         let user_id = ObjectId::parse_str(user_id).unwrap();
-        let filter = doc!{"_id":user_id};
+        let expedition_id = ObjectId::parse_str(expedition_id).unwrap();
+        let user_filter = doc!{"_id":user_id};
+        let expedition_filter = doc!{"_id":expedition_id};
+
     }
 
 
