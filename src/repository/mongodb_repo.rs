@@ -2,12 +2,13 @@ use std::env;
 extern crate dotenv;
 use dotenv::dotenv;
 
+
 use mongodb::{
     bson::{extjson::de::Error, oid::ObjectId, doc},
     results::{InsertOneResult,UpdateResult,DeleteResult},
     sync::{Client, Collection},
 };
-use crate::{api::expedition_api::get_expedition, models::expedition_model::Expedition};
+use crate::models::expedition_model::Expedition;
 use crate::models::user_model::User;
 
 pub struct MongoRepo {
@@ -29,6 +30,7 @@ impl MongoRepo {
         MongoRepo { expedition_col,user_col }
     }
 
+    
     pub fn create_expedition(&self, new_expedition: Expedition) -> Result<InsertOneResult, Error> {
 
         let new_doc = Expedition {
@@ -63,38 +65,197 @@ impl MongoRepo {
             .expect("Error getting expeditions's detail");
         Ok(expedition_detail.unwrap())
     }
-    //TODO add exp to usr
+
+    pub fn add_expedition_to_organizator(&self,user_id:&String,new_expedition: Expedition) -> Result<UpdateResult,Error>{
+
+        let expedition_id = match self.create_expedition(new_expedition.clone()){
+            Ok(expedition) => expedition.inserted_id.to_string(),
+            Err(err) => return Err(err),
+        };
+
+        let new_user_doc = doc! {
+            "$push": {
+                "organized_expeditions": {
+                    "exp_id": expedition_id,
+                    "name": &new_expedition.name,
+                    "start_date": &new_expedition.start_time,
+                }
+            }
+            };
+
+            let user_id = ObjectId::parse_str(user_id).unwrap();
+            let user_filter = doc!{"_id":user_id};
+
+            let updated_user_doc = self
+            .user_col
+            .update_one(user_filter, new_user_doc, None)
+            .ok()
+            .expect("Error updating user");
+        
+    Ok(updated_user_doc)
+
+    }
+    
     pub fn add_expedition_to_user(&self,user_id:&String,expedition_id:&String) -> Result<UpdateResult,Error>{
         
-        let expedition_detail = self.get_expedition(expedition_id);
-        match expedition_detail {
-            Ok(expedition) => Ok(Json(expedition)),
-            Err(_) => Err(Status::InternalServerError),
-        }
-        let user_detail = self.get_user(user_id);
+        let expedition_detail = match self.get_expedition(expedition_id) {
+            Ok(expedition) => expedition,
+            Err(err) => return Err(err),
+        };
+
+        let user_detail = match self.get_user(user_id) {
+            Ok(user) => user,
+            Err(err) => return Err(err),
+        };
 
 
-        let new_user_doc = doc!{
-            "$push":{
+        let new_user_doc = doc! {
+            "$push": {
                 "my_expeditions": {
-                    {
-                        "exp_id": expedition_id,
-                        "name": expedition_detail.,
-                        "start_date": 2122,
-                        "reserved": false,
-                        "paid": false
-                      }
+                    "exp_id": expedition_id,
+                    "name": &expedition_detail.name,
+                    "start_date": &expedition_detail.start_time,
+                    "reserved": false,
+                    "paid": false
+                }
+            }
+            };
+
+        let new_exp_doc = doc! {
+            "$push": {
+                "participants":{
+                    "user_id":user_id,
+                    "firstname":user_detail.firstname,
+                    "lastname":user_detail.lastname,
+                    "paid":false
                 }
             }
         };
-        let user_id = ObjectId::parse_str(user_id).unwrap();
+
+        
+
+
         let expedition_id = ObjectId::parse_str(expedition_id).unwrap();
+        let user_id = ObjectId::parse_str(user_id).unwrap();
         let user_filter = doc!{"_id":user_id};
         let expedition_filter = doc!{"_id":expedition_id};
+
+        let updated_user_doc = self
+        .user_col
+        .update_one(user_filter, new_user_doc, None)
+        .ok()
+        .expect("Error updating user");
+
+        self
+        .expedition_col
+        .update_one(expedition_filter, new_exp_doc, None)
+        .ok()
+        .expect("Error updating expedition");
+
+
+    Ok(updated_user_doc)
 
     }
 
 
+    pub fn mark_expedition_as_paid(&self, user_id: &String, expedition_id: &String) -> Result<UpdateResult, Error> {
+        let expedition_id = match ObjectId::parse_str(expedition_id) {
+            Ok(id) => id,
+            Err(err) => return Err(Error::from(err)),
+        };
+    
+        let user_id = match ObjectId::parse_str(user_id) {
+            Ok(id) => id,
+            Err(err) => return Err(Error::from(err)),
+        };
+    
+        let user_filter = doc! {
+            "_id": user_id,
+            "my_expeditions.exp_id": expedition_id,
+        };
+    
+        let expedition_filter = doc! {
+            "_id": expedition_id,
+            "participants.user_id": user_id,
+        };
+    
+        // Update documents to set "paid": true
+        let update_user_doc = doc! {
+            "$set": {
+                "my_expeditions.$.paid": true,
+            },
+        };
+    
+        let update_expedition_doc = doc! {
+            "$set": {
+                "participants.$.paid": true,
+            },
+        };
+    
+
+        let updated_user_doc = self
+        .user_col
+        .update_one(user_filter, update_user_doc, None)
+        .ok()
+        .expect("Error updating user");
+
+        self
+        .expedition_col
+        .update_one(expedition_filter, update_expedition_doc, None)
+        .ok()
+        .expect("Error updating expedition");
+
+
+    
+        Ok(updated_user_doc)
+    }
+
+    pub fn make_user_participant(&self,id: &String,firstname: &String,lastname:&String) -> Result<UpdateResult,Error>{
+        let obj_id = ObjectId::parse_str(id).unwrap();
+        let filter = doc! {"_id": obj_id};
+        let new_doc = doc! {
+            "$set":
+                {
+                    "firstname":firstname,
+                    "lastname":lastname,
+                    "my_expeditions":[],
+                },
+            "$push":
+            {
+                "role":"Participant"
+            },
+    };
+    let updated_doc = self
+    .user_col
+    .update_one(filter, new_doc, None)
+    .ok()
+    .expect("Error updating user");
+Ok(updated_doc)
+
+}
+
+pub fn make_user_organizer(&self,id: &String,company_name: &String,contact:&String) -> Result<UpdateResult,Error>{
+    let obj_id = ObjectId::parse_str(id).unwrap();
+    let filter = doc! {"_id": obj_id};
+    let new_doc = doc! {
+        "$set":
+            {
+                "company_name":company_name,
+                "contact":contact,
+                "organized_expeditions":[],
+            },
+        "$push":
+        {
+            "role":"Organizer"
+        },
+};
+let updated_doc = self
+.user_col
+.update_one(filter, new_doc, None)
+.ok()
+.expect("Error updating user");
+Ok(updated_doc)
+}
     pub fn update_expedition(&self, id: &String, updated_expedition: Expedition) -> Result<UpdateResult, Error> {
         let obj_id = ObjectId::parse_str(id).unwrap();
         let filter = doc! {"_id": obj_id};

@@ -1,5 +1,5 @@
 use crate::{models::user_model::User, repository::mongodb_repo::MongoRepo};
-use mongodb::{bson::oid::ObjectId, results::InsertOneResult};
+use mongodb::results::InsertOneResult;
 use rocket::{http::Status, serde::json::Json, State};
 
 #[post("/user", data = "<new_user>")]

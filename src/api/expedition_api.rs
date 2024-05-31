@@ -1,5 +1,5 @@
 use crate::{models::expedition_model::Expedition, repository::mongodb_repo::MongoRepo};
-use mongodb::{bson::oid::ObjectId, results::InsertOneResult};
+use mongodb:: results::InsertOneResult;
 use rocket::{http::Status, serde::json::Json, State};
 
 
@@ -31,33 +31,33 @@ pub fn get_expedition(db: &State<MongoRepo>, path: String) -> Result<Json<Expedi
     }
 }
 
-// #[put("/expedition/<path>", data = "<new_expedition>")]
-// pub fn update_expedition(
-//     db: &State<MongoRepo>,
-//     path: String,
-//     new_expedition: Json<Expedition>,
-// ) -> Result<Json<Expedition>, Status> {
-//     let id = path;
-//     if id.is_empty() {
-//         return Err(Status::BadRequest);
-//     };
-//     let data: Expedition = new_expedition.into_inner();
-//     let update_result = db.update_expedition(&id, data);
-//     match update_result {
-//         Ok(update) => {
-//             if update.matched_count == 1 {
-//                 let updated_expedition_info = db.get_expedition(&id);
-//                 return match updated_expedition_info {
-//                     Ok(expedition) => Ok(Json(expedition)),
-//                     Err(_) => Err(Status::InternalServerError),
-//                 };
-//             } else {
-//                 return Err(Status::NotFound);
-//             }
-//         }
-//         Err(_) => Err(Status::InternalServerError),
-//     }
-// }
+#[put("/expedition/<path>", data = "<new_expedition>")]
+pub fn update_expedition(
+    db: &State<MongoRepo>,
+    path: String,
+    new_expedition: Json<Expedition>,
+) -> Result<Json<Expedition>, Status> {
+    let id = path;
+    if id.is_empty() {
+        return Err(Status::BadRequest);
+    };
+    let data: Expedition = new_expedition.into_inner();
+    let update_result = db.update_expedition(&id, data);
+    match update_result {
+        Ok(update) => {
+            if update.matched_count == 1 {
+                let updated_expedition_info = db.get_expedition(&id);
+                return match updated_expedition_info {
+                    Ok(expedition) => Ok(Json(expedition)),
+                    Err(_) => Err(Status::InternalServerError),
+                };
+            } else {
+                return Err(Status::NotFound);
+            }
+        }
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
 
 #[delete("/expedition/<path>")]
 pub fn delete_expedition(db: &State<MongoRepo>, path: String) -> Result<Json<&str>, Status> {
