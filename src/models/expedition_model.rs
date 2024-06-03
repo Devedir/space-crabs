@@ -9,7 +9,8 @@ pub struct Expedition {
     pub stops: Vec<String>,
     pub max_no_participants: i64,
     pub guide: Guide,
-    pub organizer: Organizer,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub organizer: Option<Organizer>,
     pub start_time: i64,
     pub end_time: i64,
     pub home_station: String,

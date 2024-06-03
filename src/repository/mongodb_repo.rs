@@ -8,7 +8,7 @@ use mongodb::{
     results::{InsertOneResult,UpdateResult,DeleteResult},
     sync::{Client, Collection},
 };
-use crate::models::expedition_model::Expedition;
+use crate::models::expedition_model::{Expedition, Organizer};
 use crate::models::user_model::User;
 
 pub struct MongoRepo {
@@ -66,10 +66,23 @@ impl MongoRepo {
         Ok(expedition_detail.unwrap())
     }
 
-    pub fn add_expedition_to_organizator(&self,user_id:&String,new_expedition: Expedition) -> Result<UpdateResult,Error>{
+    pub fn add_expedition_to_organizator(&self,user_id:&String,mut new_expedition: Expedition) -> Result<UpdateResult,Error>{
 
+        if new_expedition.organizer==None{
+            let user_detail = match self.get_user(user_id) {
+                Ok(user) => user,
+                Err(err) => return Err(err),
+            };
+
+            let expedition_organizer = Organizer{
+                name: user_detail.company_name.unwrap(),
+                org_id : user_id.to_string(),
+            };
+            new_expedition.organizer = Some(expedition_organizer);
+
+        }
         let expedition_id = match self.create_expedition(new_expedition.clone()){
-            Ok(expedition) => expedition.inserted_id.to_string(),
+            Ok(expedition) => expedition.inserted_id.as_object_id().unwrap().to_hex(),
             Err(err) => return Err(err),
         };
 
@@ -256,111 +269,111 @@ let updated_doc = self
 .expect("Error updating user");
 Ok(updated_doc)
 }
-    pub fn update_expedition(&self, id: &String, updated_expedition: Expedition) -> Result<UpdateResult, Error> {
-        let obj_id = ObjectId::parse_str(id).unwrap();
-        let filter = doc! {"_id": obj_id};
-        let new_doc = doc! {
-            "$set":
-                {
-                    "name": updated_expedition.name,
-                    "stops": updated_expedition.stops,
-                    "max_no_participants": updated_expedition.max_no_participants,
-                    "guide": {
-                        "firstaname":updated_expedition.guide.firstname,
-                        "lastname":updated_expedition.guide.lastname,
-                        "age":updated_expedition.guide.age,
-                        "experience":updated_expedition.guide.experience,},
-                    "organizer": {
-                        "org_id":updated_expedition.organizer.org_id,
-                        "name":updated_expedition.organizer.name,
+        pub fn update_expedition(&self, id: &String, updated_expedition: Expedition) -> Result<UpdateResult, Error> {
+            let obj_id = ObjectId::parse_str(id).unwrap();
+            let filter = doc! {"_id": obj_id};
+            let new_doc = doc! {
+                "$set":
+                    {
+                        "name": updated_expedition.name,
+                        "stops": updated_expedition.stops,
+                        "max_no_participants": updated_expedition.max_no_participants,
+                        "guide": {
+                            "firstaname":updated_expedition.guide.firstname,
+                            "lastname":updated_expedition.guide.lastname,
+                            "age":updated_expedition.guide.age,
+                            "experience":updated_expedition.guide.experience,},
+                        // "organizer": {
+                        //     "org_id":updated_expedition.organizer.unwrap().org_id,
+                        //     "name":updated_expedition.organizer.unwrap().name,
+                        // },
+                        "start_time": updated_expedition.start_time,
+                        "end_time": updated_expedition.end_time,
+                        "home_station": updated_expedition.home_station,
+                        "price": updated_expedition.price,
                     },
-                    "start_time": updated_expedition.start_time,
-                    "end_time": updated_expedition.end_time,
-                    "home_station": updated_expedition.home_station,
-                    "price": updated_expedition.price,
-                },
-        };
-        let updated_doc = self
-            .expedition_col
-            .update_one(filter, new_doc, None)
-            .ok()
-            .expect("Error updating expedition");
-        Ok(updated_doc)
-    }
+            };
+            let updated_doc = self
+                .expedition_col
+                .update_one(filter, new_doc, None)
+                .ok()
+                .expect("Error updating expedition");
+            Ok(updated_doc)
+        }
 
-    pub fn delete_expedition(&self, id: &String) -> Result<DeleteResult, Error> {
-        let obj_id = ObjectId::parse_str(id).unwrap();
-        let filter = doc! {"_id": obj_id};
-        let expedition_detail = self
-            .expedition_col
-            .delete_one(filter, None)
-            .ok()
-            .expect("Error deleting expedition");
-        Ok(expedition_detail)
-    }
+        pub fn delete_expedition(&self, id: &String) -> Result<DeleteResult, Error> {
+            let obj_id = ObjectId::parse_str(id).unwrap();
+            let filter = doc! {"_id": obj_id};
+            let expedition_detail = self
+                .expedition_col
+                .delete_one(filter, None)
+                .ok()
+                .expect("Error deleting expedition");
+            Ok(expedition_detail)
+        }
 
-    pub fn get_all_expeditions(&self) -> Result<Vec<Expedition>, Error> {
-        let cursors = self
-            .expedition_col
-            .find(None, None)
-            .ok()
-            .expect("Error getting list of expeditions");
-        let expeditions = cursors.map(|doc| doc.unwrap()).collect();
-        Ok(expeditions)
-    }
+        pub fn get_all_expeditions(&self) -> Result<Vec<Expedition>, Error> {
+            let cursors = self
+                .expedition_col
+                .find(None, None)
+                .ok()
+                .expect("Error getting list of expeditions");
+            let expeditions = cursors.map(|doc| doc.unwrap()).collect();
+            Ok(expeditions)
+        }
 
-    pub fn create_user(&self, new_user: User) -> Result<InsertOneResult, Error> {
+        pub fn create_user(&self, new_user: User) -> Result<InsertOneResult, Error> {
 
-        let new_doc = User {
-            id:None, //mongoDB will create unique id
-            login: new_user.login,
-            password:new_user.password,
-            role:new_user.role,
-            firstname:new_user.firstname,
-            lastname:new_user.lastname,
-            company_name:new_user.company_name,
-            my_expeditions:new_user.my_expeditions,
-            organized_expeditions:new_user.organized_expeditions,
-            contact:new_user.contact,
-        };
+            let new_doc = User {
+                id:None, //mongoDB will create unique id
+                login: new_user.login,
+                password:new_user.password,
+                role:new_user.role,
+                firstname:new_user.firstname,
+                lastname:new_user.lastname,
+                company_name:new_user.company_name,
+                my_expeditions:new_user.my_expeditions,
+                organized_expeditions:new_user.organized_expeditions,
+                contact:new_user.contact,
+            };
 
-        let user = self
-            .user_col
-            .insert_one(new_doc, None)
-            .ok()
-            .expect("Error creating user");
-        Ok(user)
-    }
+            let user = self
+                .user_col
+                .insert_one(new_doc, None)
+                .ok()
+                .expect("Error creating user");
+            Ok(user)
+        }
 
-    pub fn get_user(&self, id: &String) -> Result<User, Error> {
-        let obj_id = ObjectId::parse_str(id).unwrap();
-        let filter = doc! {"_id": obj_id};
-        let user_detail = self
-            .user_col
-            .find_one(filter, None)
-            .ok()
-            .expect("Error getting user's detail");
-        Ok(user_detail.unwrap())
-    }
+        pub fn get_user(&self, id: &String) -> Result<User, Error> {
+            let obj_id = ObjectId::parse_str(id).unwrap();
+            let filter = doc! {"_id": obj_id};
+            let user_detail = self
+                .user_col
+                .find_one(filter, None)
+                .ok()
+                .expect("Error getting user's detail");
+            Ok(user_detail.unwrap())
+        }
 
-    pub fn delete_user(&self, id: &String) -> Result<DeleteResult, Error> {
-        let obj_id = ObjectId::parse_str(id).unwrap();
-        let filter = doc! {"_id": obj_id};
-        let user_detail = self
-            .user_col
-            .delete_one(filter, None)
-            .ok()
-            .expect("Error deleting user");
-        Ok(user_detail)
-    }
+        pub fn delete_user(&self, id: &String) -> Result<DeleteResult, Error> {
+            let obj_id = ObjectId::parse_str(id).unwrap();
+            let filter = doc! {"_id": obj_id};
+            let user_detail = self
+                .user_col
+                .delete_one(filter, None)
+                .ok()
+                .expect("Error deleting user");
+            Ok(user_detail)
+        }
 
-    pub fn get_all_users(&self) -> Result<Vec<User>, Error> {
-        let cursors = self
-            .user_col
-            .find(None, None)
-            .ok()
-            .expect("Error getting list of users");
-        let user = cursors.map(|doc| doc.unwrap()).collect();
-        Ok(user)
-    }
+        pub fn get_all_users(&self) -> Result<Vec<User>, Error> {
+            let cursors = self
+                .user_col
+                .find(None, None)
+                .ok()
+                .expect("Error getting list of users");
+            let user = cursors.map(|doc| doc.unwrap()).collect();
+            Ok(user)
+        }
 }

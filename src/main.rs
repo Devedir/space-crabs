@@ -5,7 +5,7 @@ mod repository;
 #[macro_use] extern crate rocket;
 
 use api::expedition_api::{create_expedition,get_expedition,delete_expedition,get_all_expeditions};
-use api::user_api::{create_user,get_user,get_all_users,delete_user};
+use api::user_api::{create_user,get_user,get_all_users,delete_user,add_expedition_to_organizator};
 use repository::mongodb_repo::MongoRepo;
 
 #[get("/")]
@@ -29,4 +29,5 @@ fn rocket() -> _ {
         .mount("/",routes![get_user])
         .mount("/",routes![delete_user])
         .mount("/", routes![get_all_users])
+        .mount("/", routes![add_expedition_to_organizator])
 }
