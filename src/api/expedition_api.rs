@@ -1,6 +1,6 @@
 use crate::{models::expedition_model::Expedition, repository::mongodb_repo::MongoRepo};
 use mongodb:: results::InsertOneResult;
-use rocket::{http::Status, serde::json::Json, State};
+use rocket::{data, http::Status, serde::json::Json, State};
 
 
 #[post("/expedition", data = "<new_expedition>")]
@@ -83,6 +83,27 @@ pub fn get_all_expeditions(db: &State<MongoRepo>) -> Result<Json<Vec<Expedition>
     let expedition = db.get_all_expeditions();
     match expedition {
         Ok(expedition) => Ok(Json(expedition)),
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
+
+#[post("/expedition/<path>", data = "<data>")]
+pub fn add_expedition_to_user(db: &State<MongoRepo>,path:String,data:String)->Result<Json<Expedition>,Status>{
+    let expedition_id = path;
+    let user_id = data;
+    let result = db.add_expedition_to_user(&user_id,&expedition_id);
+    match result {
+        Ok(update) => {
+            if update.matched_count == 1 {
+                let updated_expedition_info = db.get_expedition(&expedition_id);
+                return match updated_expedition_info {
+                    Ok(expedition) => Ok(Json(expedition)),
+                    Err(_) => Err(Status::InternalServerError),
+                };
+            } else {
+                return Err(Status::NotFound);
+            }
+        }
         Err(_) => Err(Status::InternalServerError),
     }
 }

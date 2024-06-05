@@ -153,20 +153,22 @@ impl MongoRepo {
         let user_filter = doc!{"_id":user_id};
         let expedition_filter = doc!{"_id":expedition_id};
 
-        let updated_user_doc = self
-        .user_col
-        .update_one(user_filter, new_user_doc, None)
-        .ok()
-        .expect("Error updating user");
-
-        self
+        let updated_expedition_doc = self
         .expedition_col
         .update_one(expedition_filter, new_exp_doc, None)
         .ok()
         .expect("Error updating expedition");
 
 
-    Ok(updated_user_doc)
+
+        self
+        .user_col
+        .update_one(user_filter, new_user_doc, None)
+        .ok()
+        .expect("Error updating user");
+
+
+    Ok(updated_expedition_doc)
 
     }
 
