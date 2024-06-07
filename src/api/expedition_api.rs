@@ -1,6 +1,9 @@
+use std::collections::HashMap;
+
 use crate::{models::expedition_model::Expedition, repository::mongodb_repo::MongoRepo};
 use mongodb:: results::InsertOneResult;
-use rocket::{data, http::Status, serde::json::Json, State};
+use rocket::{ http::Status, serde::json::Json, State};
+use rocket_dyn_templates::{context, Template};
 
 
 #[post("/expedition", data = "<new_expedition>")]
@@ -19,14 +22,18 @@ pub fn create_expedition(
 
 
 #[get("/expedition/<path>")]
-pub fn get_expedition(db: &State<MongoRepo>, path: String) -> Result<Json<Expedition>, Status> {
+pub fn get_expedition(db: &State<MongoRepo>, path: String) -> Result<Template, Status> {
     let id = path;
     if id.is_empty() {
         return Err(Status::BadRequest);
     };
     let expedition_detail = db.get_expedition(&id);
     match expedition_detail {
-        Ok(expedition) => Ok(Json(expedition)),
+        Ok(expedition) => {
+            let mut context = HashMap::new();
+            context.insert("expedition", expedition);
+            Ok(Template::render("expedition", &context))
+        },
         Err(_) => Err(Status::InternalServerError),
     }
 }
@@ -79,10 +86,14 @@ pub fn delete_expedition(db: &State<MongoRepo>, path: String) -> Result<Json<&st
 }
 
 #[get("/expeditions")]
-pub fn get_all_expeditions(db: &State<MongoRepo>) -> Result<Json<Vec<Expedition>>, Status> {
+pub fn get_all_expeditions(db: &State<MongoRepo>) -> Result<Template,Status> {
     let expedition = db.get_all_expeditions();
     match expedition {
-        Ok(expedition) => Ok(Json(expedition)),
+        Ok(expeditions) => {
+            let mut context = HashMap::new();
+            context.insert("expeditions", expeditions);
+            Ok(Template::render("expeditions", &context))
+        },
         Err(_) => Err(Status::InternalServerError),
     }
 }

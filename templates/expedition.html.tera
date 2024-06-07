@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detale Ekspedycji</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .expedition {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        .expedition h2 {
+            margin-top: 0;
+        }
+        .stops, .participants {
+            list-style-type: none;
+            padding-left: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Detale Ekspedycji</h1>
+    <div class="expedition">
+        <h2>{{ expedition.name }}</h2>
+        <p>
+            <strong>Przewodnik:</strong> {{ expedition.guide.firstname }} {{ expedition.guide.lastname }} ({{ expedition.guide.experience }})<br>
+            <strong>Organizator:</strong> {{ expedition.organizer.name }}<br>
+            <strong>Stacja startowa:</strong> {{ expedition.home_station }}<br>
+            <strong>Czas trwania:</strong> {{ expedition.start_time }} - {{ expedition.end_time }}<br>
+            <strong>Maksymalna liczba uczestników:</strong> {{ expedition.max_no_participants }}<br>
+            <strong>Cena:</strong> {{ expedition.price }} kredytów
+        </p>
+        <h3>Przystanki</h3>
+        <ul class="stops">
+            {% for stop in expedition.stops %}
+            <li>{{ stop }}</li>
+            {% endfor %}
+        </ul>
+        <h3>Uczestnicy</h3>
+        <ul class="participants">
+            {% for participant in expedition.participants %}
+            <li>{{ participant.firstname }} {{ participant.lastname }} (Opłacone: {% if participant.paid %}Tak{% else %}Nie{% endif %})</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <a href="/expeditions">Powrót do listy ekspedycji</a>
+</body>
+</html>
