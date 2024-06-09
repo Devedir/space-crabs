@@ -1,6 +1,10 @@
-use crate::{models::{expedition_model::Expedition, user_model::User}, repository::mongodb_repo::MongoRepo};
+use crate::{models::{expedition_model::Expedition, user_model::{User, UserForm, USER_PASSWORD_SALT}}, repository::mongodb_repo::MongoRepo};
+use argon2::Config;
+use rocket::form::Form;
 use mongodb::results::{InsertOneResult,UpdateResult};
-use rocket::{http::Status, serde::json::Json, State};
+use rocket::{http::Status, request::FlashMessage, response::{Flash, Redirect}, serde::json::{self, Json}, State};
+use rocket_dyn_templates::Template;
+use rocket_dyn_templates::serde::json::json;
 
 #[post("/user", data = "<new_user>")]
 pub fn create_user(
@@ -71,3 +75,61 @@ pub fn add_expedition_to_organizator(
             Err(_) => Err(Status::InternalServerError),
         }
     }
+
+ #[get("/signup")]
+pub fn signup_page(flash: Option<FlashMessage<'_>>) -> Template {
+        Template::render(
+            "signup", 
+            json!({
+                "flash": flash.map(FlashMessage::into_inner)
+            })
+        )
+}
+
+
+
+#[post("/createaccount", data = "<user_form>")]
+pub async fn create_account(db: &State<MongoRepo>, user_form: Form<UserForm>) -> Flash<Redirect> {
+    let user = user_form.into_inner();
+
+    let hash_config = Config::default();
+    let hash = match argon2::hash_encoded(user.password.as_bytes(), USER_PASSWORD_SALT, &hash_config) {
+        Ok(result) => result,
+        Err(_) => {
+            return Flash::error(Redirect::to("/signup"), "Issue creating account");
+        }
+    };
+
+    let active_user = User {
+        id: None,
+        login: user.login,
+        password: hash,
+        role: [].to_vec(),
+        firstname: None,
+        lastname: None,
+        company_name: None,
+        my_expeditions: None,
+        organized_expeditions: None,
+        contact: None,
+    };
+
+    match db.create_user(active_user) {
+        Ok(_) => Flash::success(Redirect::to("/login"), "Account created successfully!"),
+        Err(e) => {
+            eprintln!("Error creating user: {:?}", e); // Debugging line
+            Flash::error(Redirect::to("/signup"), "Issue creating account")
+        }
+    }
+}
+
+
+
+#[get("/login")]
+pub fn login_page(flash: Option<FlashMessage<'_>>) -> Template {
+    Template::render(
+        "login", 
+        json!({
+            "flash": flash.map(FlashMessage::into_inner)
+        })
+    )
+}
