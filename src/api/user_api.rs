@@ -1,7 +1,7 @@
 use crate::{models::{expedition_model::Expedition, user_model::{User, UserForm, USER_PASSWORD_SALT}}, repository::mongodb_repo::MongoRepo};
 use argon2::Config;
-use rocket::form::Form;
-use mongodb::results::{InsertOneResult,UpdateResult};
+use rocket::{form::Form, http::{Cookie, CookieJar}};
+use mongodb::{bson, results::{InsertOneResult,UpdateResult}};
 use rocket::{http::Status, request::FlashMessage, response::{Flash, Redirect}, serde::json::{self, Json}, State};
 use rocket_dyn_templates::Template;
 use rocket_dyn_templates::serde::json::json;
@@ -132,4 +132,37 @@ pub fn login_page(flash: Option<FlashMessage<'_>>) -> Template {
             "flash": flash.map(FlashMessage::into_inner)
         })
     )
+}
+
+
+#[post("/verifyaccount", data="<user_form>")]
+pub fn verify_account(db: &State<MongoRepo>, cookies: & CookieJar<'_>, user_form: Form<UserForm>) -> Flash<Redirect> {
+    let user = user_form.into_inner();
+
+    let stored_user = match db.find_user(&user.login) {
+        Ok(user) => user,
+        Err(_) => return login_error(),
+    };
+
+    // Weryfikacja hasła
+    let is_password_correct = match argon2::verify_encoded(&stored_user.password, user.password.as_bytes()) {
+        Ok(result) => result,
+        Err(_) => return Flash::error(Redirect::to("/login"), "Encountered an issue processing your account"),
+    };
+
+    if !is_password_correct {
+        return login_error();
+    }
+
+    set_user_id_cookie(cookies, stored_user.id.unwrap());
+    Flash::success(Redirect::to("/"), "Logged in successfully!")
+}
+
+fn login_error() -> Flash<Redirect> {
+    Flash::error(Redirect::to("/login"), "Invalid username or password")
+}
+
+
+fn set_user_id_cookie(cookies: &CookieJar<'_>, user_id: bson::oid::ObjectId) {
+    cookies.add_private(Cookie::new("user_id", user_id.to_hex()));
 }

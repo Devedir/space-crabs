@@ -12,8 +12,8 @@ use crate::models::expedition_model::{Expedition, Organizer};
 use crate::models::user_model::User;
 
 pub struct MongoRepo {
-    expedition_col: Collection<Expedition>,
-    user_col:Collection<User>,
+    pub expedition_col: Collection<Expedition>,
+    pub user_col:Collection<User>,
 }
 
 impl MongoRepo {
@@ -377,5 +377,16 @@ Ok(updated_doc)
                 .expect("Error getting list of users");
             let user = cursors.map(|doc| doc.unwrap()).collect();
             Ok(user)
+        }
+
+
+        pub fn find_user(&self,login:&String) -> Result<User,Error>{
+            let stored_user = self
+            .user_col
+            .find_one(doc! { "login": &login }, None)
+            .ok()
+            .expect("Error finding user");
+        Ok(stored_user.unwrap())
+
         }
 }
