@@ -172,7 +172,7 @@ impl MongoRepo {
 
     }
 
-
+    
     pub fn mark_expedition_as_paid(&self, user_id: &String, expedition_id: &String) -> Result<UpdateResult, Error> {
         let expedition_id = match ObjectId::parse_str(expedition_id) {
             Ok(id) => id,

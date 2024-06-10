@@ -1,7 +1,7 @@
 use mongodb::bson::oid::ObjectId;
 use serde::{Serialize, Deserialize};
 
-pub const USER_PASSWORD_SALT: &[u8] = b"nie wiem co ja tutaj robie";
+// pub const USER_PASSWORD_SALT: &[u8] = b"nie wiem co ja tutaj robie";
 
 #[derive(Debug, Serialize, Deserialize)] //generate implementation support for formatting the output, serializing, and deserializing the data structure.
 pub struct User {

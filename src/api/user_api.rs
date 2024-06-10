@@ -1,8 +1,8 @@
-use crate::{models::{expedition_model::Expedition, user_model::{User, UserForm, USER_PASSWORD_SALT}}, repository::mongodb_repo::MongoRepo};
-use argon2::Config;
+use crate::{models::{expedition_model::Expedition, user_model::{User, UserForm}}, repository::mongodb_repo::MongoRepo};
+// use argon2::Config;
 use rocket::{form::Form, http::{Cookie, CookieJar}};
 use mongodb::{bson, results::{InsertOneResult,UpdateResult}};
-use rocket::{http::Status, request::FlashMessage, response::{Flash, Redirect}, serde::json::{self, Json}, State};
+use rocket::{http::Status, request::FlashMessage, response::{Flash, Redirect}, serde::json:: Json, State};
 use rocket_dyn_templates::Template;
 use rocket_dyn_templates::serde::json::json;
 
@@ -92,18 +92,18 @@ pub fn signup_page(flash: Option<FlashMessage<'_>>) -> Template {
 pub async fn create_account(db: &State<MongoRepo>, user_form: Form<UserForm>) -> Flash<Redirect> {
     let user = user_form.into_inner();
 
-    let hash_config = Config::default();
-    let hash = match argon2::hash_encoded(user.password.as_bytes(), USER_PASSWORD_SALT, &hash_config) {
-        Ok(result) => result,
-        Err(_) => {
-            return Flash::error(Redirect::to("/signup"), "Issue creating account");
-        }
-    };
+    // let hash_config = Config::default();
+    // let hash = match argon2::hash_encoded(user.password.as_bytes(), USER_PASSWORD_SALT, &hash_config) {
+    //     Ok(result) => result,
+    //     Err(_) => {
+    //         return Flash::error(Redirect::to("/signup"), "Issue creating account");
+    //     }
+    // };
 
     let active_user = User {
         id: None,
         login: user.login,
-        password: hash,
+        password: user.password,
         role: [].to_vec(),
         firstname: None,
         lastname: None,
@@ -116,7 +116,7 @@ pub async fn create_account(db: &State<MongoRepo>, user_form: Form<UserForm>) ->
     match db.create_user(active_user) {
         Ok(_) => Flash::success(Redirect::to("/login"), "Account created successfully!"),
         Err(e) => {
-            eprintln!("Error creating user: {:?}", e); // Debugging line
+            eprintln!("Error creating user: {:?}", e);
             Flash::error(Redirect::to("/signup"), "Issue creating account")
         }
     }
@@ -145,10 +145,12 @@ pub fn verify_account(db: &State<MongoRepo>, cookies: & CookieJar<'_>, user_form
     };
 
     // Weryfikacja hasła
-    let is_password_correct = match argon2::verify_encoded(&stored_user.password, user.password.as_bytes()) {
-        Ok(result) => result,
-        Err(_) => return Flash::error(Redirect::to("/login"), "Encountered an issue processing your account"),
-    };
+    // let is_password_correct = match argon2::verify_encoded(&stored_user.password, user.password.as_bytes()) {
+    //     Ok(result) => result,
+    //     Err(_) => return Flash::error(Redirect::to("/login"), "Encountered an issue processing your account"),
+    // };
+
+    let is_password_correct = user.password == stored_user.password;
 
     if !is_password_correct {
         return login_error();
