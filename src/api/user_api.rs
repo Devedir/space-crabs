@@ -2,6 +2,7 @@ use crate::{models::{expedition_model::Expedition, user_model::User}, repository
 use mongodb::results::{InsertOneResult,UpdateResult};
 use rocket::{http::Status, serde::json::Json, State};
 
+
 #[post("/user", data = "<new_user>")]
 pub fn create_user(
     db: &State<MongoRepo>,
@@ -17,7 +18,11 @@ pub fn create_user(
 }
 
 #[get("/user/<path>")]
-pub fn get_user(db: &State<MongoRepo>, path: String) -> Result<Json<User>, Status> {
+pub fn get_user(
+    db: &State<MongoRepo>,
+    path: String
+) -> Result<Json<User>, Status> {
+
     let id = path;
     if id.is_empty() {
         return Err(Status::BadRequest);
@@ -30,7 +35,11 @@ pub fn get_user(db: &State<MongoRepo>, path: String) -> Result<Json<User>, Statu
 }
 
 #[delete("/user/<path>")]
-pub fn delete_user(db: &State<MongoRepo>, path: String) -> Result<Json<&str>, Status> {
+pub fn delete_user(
+    db: &State<MongoRepo>,
+    path: String
+) -> Result<Json<&str>, Status> {
+    
     let id = path;
     if id.is_empty() {
         return Err(Status::BadRequest);
@@ -61,13 +70,14 @@ pub fn get_all_users(db: &State<MongoRepo>) -> Result<Json<Vec<User>>, Status> {
 pub fn add_expedition_to_organizator(
     db:&State<MongoRepo>,
     path:String,
-    new_expedition:Json<Expedition>) ->
-    Result<Json<UpdateResult>, Status> {
-        let user_id = path;
-        let expedition: Expedition = new_expedition.into_inner();
-        let result = db.add_expedition_to_organizator(&user_id, expedition);
-        match result {
-            Ok(user) => Ok(Json(user)),
-            Err(_) => Err(Status::InternalServerError),
-        }
+    new_expedition:Json<Expedition>
+) -> Result<Json<UpdateResult>, Status> {
+
+    let user_id = path;
+    let expedition: Expedition = new_expedition.into_inner();
+    let result = db.add_expedition_to_organizator(&user_id, expedition);
+    match result {
+        Ok(user) => Ok(Json(user)),
+        Err(_) => Err(Status::InternalServerError),
     }
+}
