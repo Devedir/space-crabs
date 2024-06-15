@@ -1,4 +1,7 @@
-use crate::{models::{expedition_model::Expedition, user_model::User}, repository::mongodb_repo::MongoRepo};
+use crate::{
+    models::{expedition_model::Expedition, user_model::User},
+    repository::mongodb_repo::MongoRepo
+};
 use mongodb::results::{InsertOneResult,UpdateResult};
 use rocket::{http::Status, serde::json::Json, State};
 
@@ -68,9 +71,9 @@ pub fn get_all_users(db: &State<MongoRepo>) -> Result<Json<Vec<User>>, Status> {
 
 #[post("/user/<path>", data = "<new_expedition>")]
 pub fn add_expedition_to_organizator(
-    db:&State<MongoRepo>,
-    path:String,
-    new_expedition:Json<Expedition>
+    db: &State<MongoRepo>,
+    path: String,
+    new_expedition: Json<Expedition>
 ) -> Result<Json<UpdateResult>, Status> {
 
     let user_id = path;
