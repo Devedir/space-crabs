@@ -1,6 +1,9 @@
+use std::collections::HashMap;
+
 use crate::{models::expedition_model::Expedition, repository::mongodb_repo::MongoRepo};
 use mongodb::results::InsertOneResult;
 use rocket::{http::Status, serde::json::Json, State};
+use rocket_dyn_templates::{context, Template};
 
 
 #[post("/expedition", data = "<new_expedition>")]
@@ -22,7 +25,7 @@ pub fn create_expedition(
 pub fn get_expedition(
     db: &State<MongoRepo>,
     path: String
-) -> Result<Json<Expedition>, Status> {
+) -> Result<Template, Status> {
 
     let id = path;
     if id.is_empty() {
@@ -30,7 +33,11 @@ pub fn get_expedition(
     };
     let expedition_detail = db.get_expedition(&id);
     match expedition_detail {
-        Ok(expedition) => Ok(Json(expedition)),
+        Ok(expedition) => {
+            let mut context = HashMap::new();
+            context.insert("expedition", expedition);
+            Ok(Template::render("expedition", &context))
+        },
         Err(_) => Err(Status::InternalServerError),
     }
 }
@@ -88,10 +95,35 @@ pub fn delete_expedition(
 }
 
 #[get("/expeditions")]
-pub fn get_all_expeditions(db: &State<MongoRepo>) -> Result<Json<Vec<Expedition>>, Status> {
+pub fn get_all_expeditions(db: &State<MongoRepo>) -> Result<Template,Status> {
     let expedition = db.get_all_expeditions();
     match expedition {
-        Ok(expedition) => Ok(Json(expedition)),
+        Ok(expeditions) => {
+            let mut context = HashMap::new();
+            context.insert("expeditions", expeditions);
+            Ok(Template::render("expeditions", &context))
+        },
+        Err(_) => Err(Status::InternalServerError),
+    }
+}
+
+#[post("/expedition/<path>", data = "<data>")]
+pub fn add_expedition_to_user(db: &State<MongoRepo>,path:String,data:String)->Result<Json<Expedition>,Status>{
+    let expedition_id = path;
+    let user_id = data;
+    let result = db.add_expedition_to_user(&user_id,&expedition_id);
+    match result {
+        Ok(update) => {
+            if update.matched_count == 1 {
+                let updated_expedition_info = db.get_expedition(&expedition_id);
+                return match updated_expedition_info {
+                    Ok(expedition) => Ok(Json(expedition)),
+                    Err(_) => Err(Status::InternalServerError),
+                };
+            } else {
+                return Err(Status::NotFound);
+            }
+        }
         Err(_) => Err(Status::InternalServerError),
     }
 }

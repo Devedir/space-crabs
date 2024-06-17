@@ -1,6 +1,8 @@
 use mongodb::bson::oid::ObjectId;
 use serde::{Serialize, Deserialize};
 
+// pub const USER_PASSWORD_SALT: &[u8] = b"nie wiem co ja tutaj robie";
+
 #[derive(Debug, Serialize, Deserialize)] //generate implementation support for formatting the output, serializing, and deserializing the data structure.
 pub struct User {
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
@@ -19,6 +21,7 @@ pub struct User {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub organized_expeditions: Option<Vec<MyExpedition>>,
     #[serde(skip_serializing_if = "Option::is_none")]
+
     pub contact: Option<String>
 }
 
@@ -33,3 +36,8 @@ pub struct MyExpedition {
     pub paid: Option<bool>,
 }
 
+#[derive(FromForm)]
+pub struct UserForm {
+pub login:String,
+pub password:String,
+}

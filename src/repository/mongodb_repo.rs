@@ -4,7 +4,7 @@ use dotenv::dotenv;
 
 use mongodb::{
     bson::{extjson::de::Error, oid::ObjectId, doc},
-    results::{InsertOneResult,UpdateResult,DeleteResult},
+    results::{InsertOneResult, UpdateResult, DeleteResult},
     sync::{Client, Collection},
 };
 use crate::models::expedition_model::{Expedition, Organizer};
@@ -12,8 +12,8 @@ use crate::models::user_model::User;
 
 
 pub struct MongoRepo {
-    expedition_col: Collection<Expedition>,
-    user_col: Collection<User>,
+    pub expedition_col: Collection<Expedition>,
+    pub user_col: Collection<User>
 }
 
 impl MongoRepo {
@@ -159,28 +159,28 @@ impl MongoRepo {
         let user_filter = doc!{"_id":user_id};
         let expedition_filter = doc!{"_id":expedition_id};
 
-        let updated_user_doc = self
-        .user_col
-        .update_one(user_filter, new_user_doc, None)
-        .ok()
-        .expect("Error updating user");
-
-        self
+        let updated_expedition_doc = self
         .expedition_col
         .update_one(expedition_filter, new_exp_doc, None)
         .ok()
         .expect("Error updating expedition");
 
-        Ok(updated_user_doc)
+        self
+        .user_col
+        .update_one(user_filter, new_user_doc, None)
+        .ok()
+        .expect("Error updating user");
+
+        Ok(updated_expedition_doc)
     }
 
-
+    
     pub fn mark_expedition_as_paid(
         &self,
         user_id: &String,
         expedition_id: &String
     ) -> Result<UpdateResult, Error> {
-
+      
         let expedition_id = match ObjectId::parse_str(expedition_id) {
             Ok(id) => id,
             Err(err) => return Err(Error::from(err)),
@@ -412,5 +412,15 @@ impl MongoRepo {
             .expect("Error getting list of users");
         let user = cursors.map(|doc| doc.unwrap()).collect();
         Ok(user)
+    }
+
+
+    pub fn find_user(&self, login: &String) -> Result<User, Error> {
+        let stored_user = self
+            .user_col
+            .find_one(doc! { "login": &login }, None)
+            .ok()
+            .expect("Error finding user");
+        Ok(stored_user.unwrap())
     }
 }

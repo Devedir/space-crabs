@@ -1,9 +1,13 @@
 use crate::{
-    models::{expedition_model::Expedition, user_model::User},
+    models::{expedition_model::Expedition, user_model::{User, UserForm}},
     repository::mongodb_repo::MongoRepo
 };
-use mongodb::results::{InsertOneResult,UpdateResult};
-use rocket::{http::Status, serde::json::Json, State};
+// use argon2::Config;
+use rocket::{form::Form, http::{Cookie, CookieJar}};
+use mongodb::{bson, results::{InsertOneResult,UpdateResult}};
+use rocket::{http::Status, request::FlashMessage, response::{Flash, Redirect}, serde::json:: Json, State};
+use rocket_dyn_templates::Template;
+use rocket_dyn_templates::serde::json::json;
 
 
 #[post("/user", data = "<new_user>")]
@@ -76,11 +80,104 @@ pub fn add_expedition_to_organizator(
     new_expedition: Json<Expedition>
 ) -> Result<Json<UpdateResult>, Status> {
 
-    let user_id = path;
-    let expedition: Expedition = new_expedition.into_inner();
-    let result = db.add_expedition_to_organizator(&user_id, expedition);
-    match result {
-        Ok(user) => Ok(Json(user)),
-        Err(_) => Err(Status::InternalServerError),
+        let user_id = path;
+        let expedition: Expedition = new_expedition.into_inner();
+        let result = db.add_expedition_to_organizator(&user_id, expedition);
+        match result {
+            Ok(user) => Ok(Json(user)),
+            Err(_) => Err(Status::InternalServerError),
+        }
     }
+
+ #[get("/signup")]
+pub fn signup_page(flash: Option<FlashMessage<'_>>) -> Template {
+        Template::render(
+            "signup", 
+            json!({
+                "flash": flash.map(FlashMessage::into_inner)
+            })
+        )
+}
+
+
+
+#[post("/createaccount", data = "<user_form>")]
+pub async fn create_account(db: &State<MongoRepo>, user_form: Form<UserForm>) -> Flash<Redirect> {
+    let user = user_form.into_inner();
+
+    // let hash_config = Config::default();
+    // let hash = match argon2::hash_encoded(user.password.as_bytes(), USER_PASSWORD_SALT, &hash_config) {
+    //     Ok(result) => result,
+    //     Err(_) => {
+    //         return Flash::error(Redirect::to("/signup"), "Issue creating account");
+    //     }
+    // };
+
+    let active_user = User {
+        id: None,
+        login: user.login,
+        password: user.password,
+        role: [].to_vec(),
+        firstname: None,
+        lastname: None,
+        company_name: None,
+        my_expeditions: None,
+        organized_expeditions: None,
+        contact: None,
+    };
+
+    match db.create_user(active_user) {
+        Ok(_) => Flash::success(Redirect::to("/login"), "Account created successfully!"),
+        Err(e) => {
+            eprintln!("Error creating user: {:?}", e);
+            Flash::error(Redirect::to("/signup"), "Issue creating account")
+        }
+    }
+}
+
+
+
+#[get("/login")]
+pub fn login_page(flash: Option<FlashMessage<'_>>) -> Template {
+    Template::render(
+        "login", 
+        json!({
+            "flash": flash.map(FlashMessage::into_inner)
+        })
+    )
+}
+
+
+#[post("/verifyaccount", data="<user_form>")]
+pub fn verify_account(db: &State<MongoRepo>, cookies: & CookieJar<'_>, user_form: Form<UserForm>) -> Flash<Redirect> {
+    let user = user_form.into_inner();
+
+    let stored_user = match db.find_user(&user.login) {
+        Ok(user) => user,
+        Err(_) => return login_error(),
+    };
+
+    // Weryfikacja hasła
+    // let is_password_correct = match argon2::verify_encoded(&stored_user.password, user.password.as_bytes()) {
+    //     Ok(result) => result,
+    //     Err(_) => return Flash::error(Redirect::to("/login"), "Encountered an issue processing your account"),
+    // };
+
+    let is_password_correct = user.password == stored_user.password;
+
+    if !is_password_correct {
+        return login_error();
+    }
+
+    set_user_id_cookie(cookies, stored_user.id.unwrap());
+    Flash::success(Redirect::to("/"), "Logged in successfully!")
+}
+
+fn login_error() -> Flash<Redirect> {
+    Flash::error(Redirect::to("/login"), "Invalid username or password")
+}
+
+
+fn set_user_id_cookie(cookies: &CookieJar<'_>, user_id: bson::oid::ObjectId) {
+    cookies.add_private(Cookie::new("user_id", user_id.to_hex()));
 }
