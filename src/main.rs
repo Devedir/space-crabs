@@ -13,6 +13,7 @@ use rocket::fs::FileServer;
 use rocket_dyn_templates::Template;
 use rocket::fs::relative;
 
+
 #[get("/")]
 fn index() -> &'static str {
     "Crabs can into space!"
@@ -29,12 +30,12 @@ fn rocket() -> _ {
         .mount("/", routes![index,signup_page,create_account,login_page,verify_account])
         .mount("/", routes![create_expedition])
         .mount("/", routes![get_expedition])
-        // .mount("/",routes![update_expedition])
-        .mount("/",routes![delete_expedition])
+        // .mount("/", routes![update_expedition])
+        .mount("/", routes![delete_expedition])
         .mount("/", routes![get_all_expeditions])
-        .mount("/",routes![create_user])
-        .mount("/",routes![get_user])
-        .mount("/",routes![delete_user])
+        .mount("/", routes![create_user])
+        .mount("/", routes![get_user])
+        .mount("/", routes![delete_user])
         .mount("/", routes![get_all_users])
-        .mount("/", routes![add_expedition_to_organizator,add_expedition_to_user])
+        .mount("/", routes![add_expedition_to_organizator, add_expedition_to_user])
 }

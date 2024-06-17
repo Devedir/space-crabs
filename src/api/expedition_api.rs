@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 use crate::{models::expedition_model::Expedition, repository::mongodb_repo::MongoRepo};
-use mongodb:: results::InsertOneResult;
-use rocket::{ http::Status, serde::json::Json, State};
+use mongodb::results::InsertOneResult;
+use rocket::{http::Status, serde::json::Json, State};
 use rocket_dyn_templates::{context, Template};
 
 
@@ -22,7 +22,11 @@ pub fn create_expedition(
 
 
 #[get("/expedition/<path>")]
-pub fn get_expedition(db: &State<MongoRepo>, path: String) -> Result<Template, Status> {
+pub fn get_expedition(
+    db: &State<MongoRepo>,
+    path: String
+) -> Result<Template, Status> {
+
     let id = path;
     if id.is_empty() {
         return Err(Status::BadRequest);
@@ -44,6 +48,7 @@ pub fn update_expedition(
     path: String,
     new_expedition: Json<Expedition>,
 ) -> Result<Json<Expedition>, Status> {
+
     let id = path;
     if id.is_empty() {
         return Err(Status::BadRequest);
@@ -67,7 +72,11 @@ pub fn update_expedition(
 }
 
 #[delete("/expedition/<path>")]
-pub fn delete_expedition(db: &State<MongoRepo>, path: String) -> Result<Json<&str>, Status> {
+pub fn delete_expedition(
+    db: &State<MongoRepo>,
+    path: String
+) -> Result<Json<&str>, Status> {
+    
     let id = path;
     if id.is_empty() {
         return Err(Status::BadRequest);

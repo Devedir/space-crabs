@@ -1,10 +1,14 @@
-use crate::{models::{expedition_model::Expedition, user_model::{User, UserForm}}, repository::mongodb_repo::MongoRepo};
+use crate::{
+    models::{expedition_model::Expedition, user_model::{User, UserForm}},
+    repository::mongodb_repo::MongoRepo
+};
 // use argon2::Config;
 use rocket::{form::Form, http::{Cookie, CookieJar}};
 use mongodb::{bson, results::{InsertOneResult,UpdateResult}};
 use rocket::{http::Status, request::FlashMessage, response::{Flash, Redirect}, serde::json:: Json, State};
 use rocket_dyn_templates::Template;
 use rocket_dyn_templates::serde::json::json;
+
 
 #[post("/user", data = "<new_user>")]
 pub fn create_user(
@@ -21,7 +25,11 @@ pub fn create_user(
 }
 
 #[get("/user/<path>")]
-pub fn get_user(db: &State<MongoRepo>, path: String) -> Result<Json<User>, Status> {
+pub fn get_user(
+    db: &State<MongoRepo>,
+    path: String
+) -> Result<Json<User>, Status> {
+
     let id = path;
     if id.is_empty() {
         return Err(Status::BadRequest);
@@ -34,7 +42,11 @@ pub fn get_user(db: &State<MongoRepo>, path: String) -> Result<Json<User>, Statu
 }
 
 #[delete("/user/<path>")]
-pub fn delete_user(db: &State<MongoRepo>, path: String) -> Result<Json<&str>, Status> {
+pub fn delete_user(
+    db: &State<MongoRepo>,
+    path: String
+) -> Result<Json<&str>, Status> {
+    
     let id = path;
     if id.is_empty() {
         return Err(Status::BadRequest);
@@ -63,10 +75,11 @@ pub fn get_all_users(db: &State<MongoRepo>) -> Result<Json<Vec<User>>, Status> {
 
 #[post("/user/<path>", data = "<new_expedition>")]
 pub fn add_expedition_to_organizator(
-    db:&State<MongoRepo>,
-    path:String,
-    new_expedition:Json<Expedition>) ->
-    Result<Json<UpdateResult>, Status> {
+    db: &State<MongoRepo>,
+    path: String,
+    new_expedition: Json<Expedition>
+) -> Result<Json<UpdateResult>, Status> {
+
         let user_id = path;
         let expedition: Expedition = new_expedition.into_inner();
         let result = db.add_expedition_to_organizator(&user_id, expedition);
