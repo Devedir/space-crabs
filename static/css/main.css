@@ -7,13 +7,16 @@
     --primary: #8391ed;
     --secondary: #d33847;
     --accent: #45A538;
+
+    --primary20: rgba(131, 145, 237, 20%);
+    --primary30: rgba(131, 145, 237, 30%);
 }
 
 body {
     margin: 0;
     font-family: 'Golos Text';
     font-weight: 400;
-    color: --text;
+    color: var(--text);
     background-color: var(--background);
 }
 
@@ -84,4 +87,12 @@ nav > a {
 
 .nav-element:hover {
     border-bottom: 6px solid var(--accent);
+}
+
+.pointer {
+    color: var(--accent);
+}
+
+main {
+    margin: 1% 2% 0 2%;
 }

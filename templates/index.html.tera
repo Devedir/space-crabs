@@ -20,7 +20,6 @@
             right: 2%;
             max-width: 30%;
             text-align: right;
-            color: var(--text)
         }
 
         .font-effect {
