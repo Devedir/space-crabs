@@ -10,6 +10,8 @@
 
     --primary20: rgba(131, 145, 237, 20%);
     --primary30: rgba(131, 145, 237, 30%);
+    --primary80: rgba(131, 145, 237, 80%);
+    --secondary50: rgba(211, 56, 71, 50%);
 }
 
 body {
@@ -52,7 +54,7 @@ header {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    padding: 2% 0;
+    padding: 1% 0;
     border-bottom: 1px solid var(--text);
 }
 
@@ -81,7 +83,7 @@ nav > a {
     padding: .5em;
     border-radius: .5em;
     text-align: center;
-    transition: all .5s;
+    transition: border-bottom .2s;
     border: 0 solid var(--accent);
 }
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,10 +12,9 @@
         <a href="/" id="title"><h1>Space Crabs</h1></a>
         <nav>
             <a href="expeditions"><h4 class="nav-element">
-                <span class="pointer">&gt; </span>EXPEDITIONS<span class="pointer"> &lt;</span>
+                <span class="pointer">&gt; </span>Ekspedycje<span class="pointer"> &lt;</span>
             </h4></a>
-            <a href="users"><h4 class="nav-element">USERS</h4></a>
-            <a href="login"><h4 class="nav-element">LOGIN</h4></a>
+            <a href="login"><h4 class="nav-element">Moje konto</h4></a>
         </nav>
     </header>
     <main class="expedition-list">
