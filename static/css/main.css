@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css?family=Golos%20Text:700|Golos%20Text:400');
+@import url('https://fonts.googleapis.com/css?family=Cutive:700|Cutive:500|Cutive:400');
+
+:root {
+    --text: #dddffa;
+    --background: #04051a;
+    --primary: #8391ed;
+    --secondary: #d33847;
+    --accent: #45A538;
+}
+
+body {
+    margin: 0;
+    font-family: 'Golos Text';
+    font-weight: 400;
+    color: --text;
+    background-color: var(--background);
+}
+
+h1 {
+    font-family: 'Cutive';
+    font-weight: 700;
+    margin: 0;
+}
+
+h2, h3, h4, h5 {
+    font-family: 'Golos Text';
+    font-weight: 500;
+    margin: 0;
+}
+
+html {font-size: 100%;} /* 16px */
+
+h1 {font-size: 4.210rem; /* 67.36px */}
+
+h2 {font-size: 3.158rem; /* 50.56px */}
+
+h3 {font-size: 2.369rem; /* 37.92px */}
+
+a {
+    text-decoration: none;
+    color: var(--text);
+}
+
+header {
+    width: 100%;
+    /* background-color: var(--primary); */
+    color: white;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 2% 0;
+    border-bottom: 1px solid var(--text);
+}
+
+#title {
+    margin: 0 4%;
+    text-align: center;
+}
+
+nav {
+    flex: 4;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 100%;
+    font-size: calc(10px + 1.5vw);
+}
+
+nav > a {
+    color: white;
+}
+
+.nav-element {
+    display: block;
+    box-sizing: content-box;
+    padding: .5em;
+    border-radius: .5em;
+    text-align: center;
+    transition: all .5s;
+    border: 0 solid var(--accent);
+}
+
+.nav-element:hover {
+    border-bottom: 6px solid var(--accent);
+}

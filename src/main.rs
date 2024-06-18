@@ -5,18 +5,24 @@ mod repository;
 #[macro_use] extern crate rocket;
 extern crate argon2;
 
-use api::expedition_api::{create_expedition,get_expedition,delete_expedition,get_all_expeditions,add_expedition_to_user};
-use api::user_api::{create_user,get_user,get_all_users,delete_user,add_expedition_to_organizator,
-    signup_page,create_account, login_page, verify_account};
+use api::expedition_api::{
+    create_expedition, get_expedition, delete_expedition,
+    get_all_expeditions, add_expedition_to_user
+};
+use api::user_api::{
+    create_user, get_user,get_all_users, delete_user,
+    add_expedition_to_organizator, signup_page,create_account, login_page, verify_account
+};
 use repository::mongodb_repo::MongoRepo;
 use rocket::fs::FileServer;
 use rocket_dyn_templates::Template;
 use rocket::fs::relative;
+use std::collections::HashMap;
 
 
 #[get("/")]
-fn index() -> &'static str {
-    "Crabs can into space!"
+fn index() -> Template {
+    Template::render("index", HashMap::<i32, i32>::new())
 }
 
 #[launch]

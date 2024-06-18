@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css">
+    <title>Space Crabs</title>
+
+    <style>
+        #land-img {
+            position: fixed;
+            top: 25%;
+            right: 20%;
+            overflow: hidden;
+        }
+
+        #motto {
+            position: fixed;
+            top: 35%;
+            right: 2%;
+            max-width: 30%;
+            text-align: right;
+            color: var(--text)
+        }
+
+        .font-effect {
+            font-style: italic;
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: var(--accent);
+            color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="#" id="title"><h1>Space Crabs</h1></a>
+        <nav>
+            <a href="expeditions"><h4 class="nav-element">EXPEDITIONS</h4></a>
+            <a href="users"><h4 class="nav-element">USERS</h4></a>
+            <a href="login"><h4 class="nav-element">LOGIN</h4></a>
+        </nav>
+    </header>
+    <div id="land-img">
+        <img src="img/landing.png" alt="Landing page image">
+    </div>
+    <h1 id="motto">LET'S<br>GET<br><span class="font-effect">STARTED</span></h1>
+</body>
+</html>

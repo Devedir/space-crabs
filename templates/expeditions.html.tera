@@ -28,7 +28,7 @@
     <h1>Lista Ekspedycji</h1>
     {% for expedition in expeditions %}
     <div class="expedition">
-        <h2>{{ expedition._id.$oid}}</h2>
+        <h2>{{ expedition.name}}</h2>
         <p>
             <strong>Przewodnik:</strong> {{ expedition.guide.firstname }} {{ expedition.guide.lastname }} ({{ expedition.guide.experience }})<br>
             <strong>Organizator:</strong> {{ expedition.organizer.name }}<br>

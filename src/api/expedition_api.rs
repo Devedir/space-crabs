@@ -95,7 +95,7 @@ pub fn delete_expedition(
 }
 
 #[get("/expeditions")]
-pub fn get_all_expeditions(db: &State<MongoRepo>) -> Result<Template,Status> {
+pub fn get_all_expeditions(db: &State<MongoRepo>) -> Result<Template, Status> {
     let expedition = db.get_all_expeditions();
     match expedition {
         Ok(expeditions) => {

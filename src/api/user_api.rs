@@ -4,7 +4,7 @@ use crate::{
 };
 // use argon2::Config;
 use rocket::{form::Form, http::{Cookie, CookieJar}};
-use mongodb::{bson, results::{InsertOneResult,UpdateResult}};
+use mongodb::{bson, results::{InsertOneResult, UpdateResult}};
 use rocket::{http::Status, request::FlashMessage, response::{Flash, Redirect}, serde::json:: Json, State};
 use rocket_dyn_templates::Template;
 use rocket_dyn_templates::serde::json::json;
@@ -80,23 +80,23 @@ pub fn add_expedition_to_organizator(
     new_expedition: Json<Expedition>
 ) -> Result<Json<UpdateResult>, Status> {
 
-        let user_id = path;
-        let expedition: Expedition = new_expedition.into_inner();
-        let result = db.add_expedition_to_organizator(&user_id, expedition);
-        match result {
-            Ok(user) => Ok(Json(user)),
-            Err(_) => Err(Status::InternalServerError),
-        }
+    let user_id = path;
+    let expedition: Expedition = new_expedition.into_inner();
+    let result = db.add_expedition_to_organizator(&user_id, expedition);
+    match result {
+        Ok(user) => Ok(Json(user)),
+        Err(_) => Err(Status::InternalServerError),
     }
+}
 
- #[get("/signup")]
+#[get("/signup")]
 pub fn signup_page(flash: Option<FlashMessage<'_>>) -> Template {
-        Template::render(
-            "signup", 
-            json!({
-                "flash": flash.map(FlashMessage::into_inner)
-            })
-        )
+    Template::render(
+        "signup", 
+        json!({
+            "flash": flash.map(FlashMessage::into_inner)
+        })
+    )
 }
 
 
