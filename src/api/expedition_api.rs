@@ -1,10 +1,12 @@
 use std::collections::HashMap;
 
-use crate::{models::expedition_model::Expedition, repository::mongodb_repo::MongoRepo};
+use crate::{
+    models::expedition_model::{Expedition, ApiExpedition},
+    repository::mongodb_repo::MongoRepo
+};
 use mongodb::results::InsertOneResult;
 use rocket::{http::Status, serde::json::Json, State};
-use rocket_dyn_templates::{context, Template};
-
+use rocket_dyn_templates::Template;
 
 #[post("/expedition", data = "<new_expedition>")]
 pub fn create_expedition(
@@ -96,11 +98,16 @@ pub fn delete_expedition(
 
 #[get("/expeditions")]
 pub fn get_all_expeditions(db: &State<MongoRepo>) -> Result<Template, Status> {
-    let expedition = db.get_all_expeditions();
-    match expedition {
+    let maybe_expeditions = db.get_all_expeditions();
+    match maybe_expeditions {
         Ok(expeditions) => {
+            let api_expeditions: Vec<ApiExpedition> = expeditions.iter()
+                .map(|exp| ApiExpedition {
+                    str_id: exp.id.unwrap().to_hex(),
+                    expedition: exp.clone()
+                }).collect();
             let mut context = HashMap::new();
-            context.insert("expeditions", expeditions);
+            context.insert("api_expeditions", api_expeditions);
             Ok(Template::render("expeditions", &context))
         },
         Err(_) => Err(Status::InternalServerError),

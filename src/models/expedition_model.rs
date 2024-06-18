@@ -39,3 +39,9 @@ pub struct Participant {
     pub lastname: String,
     pub paid: bool,
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct ApiExpedition {
+    pub str_id: String,
+    pub expedition: Expedition
+}

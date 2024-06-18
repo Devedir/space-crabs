@@ -38,6 +38,6 @@ pub struct MyExpedition {
 
 #[derive(FromForm)]
 pub struct UserForm {
-pub login:String,
-pub password:String,
+    pub login: String,
+    pub password: String,
 }

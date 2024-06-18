@@ -19,31 +19,31 @@
         </nav>
     </header>
     <main class="expedition-list">
-        {% for expedition in expeditions %}
-        <div class="expedition">
-            <h2>{{ expedition.name }}</h2>
+        {% for entry in api_expeditions %}
+        <div class="expedition"><a href="expedition/{{ entry.str_id }}">
+            <h2>{{ entry.expedition.name }}</h2>
             <p>
-                <strong>Przewodnik:</strong> {{ expedition.guide.firstname }} {{ expedition.guide.lastname }} ({{ expedition.guide.experience }})<br>
-                <strong>Organizator:</strong> {{ expedition.organizer.name }}<br>
-                <strong>Stacja startowa:</strong> {{ expedition.home_station }}<br>
-                <strong>Czas trwania:</strong> {{ expedition.start_time }} - {{ expedition.end_time }}<br>
-                <strong>Maksymalna liczba uczestników:</strong> {{ expedition.max_no_participants }}<br>
-                <strong>Cena:</strong> {{ expedition.price }} kredytów
+                <strong>Przewodnik:</strong> {{ entry.expedition.guide.firstname }} {{ entry.expedition.guide.lastname }} ({{ entry.expedition.guide.experience }})<br>
+                <strong>Organizator:</strong> {{ entry.expedition.organizer.name }}<br>
+                <strong>Stacja startowa:</strong> {{ entry.expedition.home_station }}<br>
+                <strong>Czas trwania:</strong> {{ entry.expedition.start_time }} - {{ entry.expedition.end_time }}<br>
+                <strong>Maksymalna liczba uczestników:</strong> {{ entry.expedition.max_no_participants }}<br>
+                <strong>Cena:</strong> {{ entry.expedition.price }} kredytów
             </p>
             <h3>Przystanki</h3>
             <ul class="stops">
-                {% for stop in expedition.stops %}
+                {% for stop in entry.expedition.stops %}
                 <li>{{ stop }}</li>
                 {% endfor %}
             </ul>
             <h3>Uczestnicy</h3>
             <ul class="participants">
-                {% for participant in expedition.participants %}
+                {% for participant in entry.expedition.participants %}
                 <li>{{ participant.firstname }} {{ participant.lastname }} (Opłacone: {% if participant.paid %}Tak{% else %}Nie{% endif %})</li>
     
                 {% endfor %}
             </ul>
-        </div>
+        </a></div>
         {% endfor %}
     </main>
 </body>
