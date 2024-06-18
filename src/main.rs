@@ -33,7 +33,7 @@ fn rocket() -> _ {
         .manage(db)
         .attach(Template::fairing())
         .mount("/", FileServer::from(relative!("static")))
-        .mount("/", routes![index,signup_page,create_account,login_page,verify_account])
+        .mount("/", routes![index, signup_page, create_account, login_page, verify_account])
         .mount("/", routes![create_expedition])
         .mount("/", routes![get_expedition])
         // .mount("/", routes![update_expedition])
@@ -43,5 +43,6 @@ fn rocket() -> _ {
         .mount("/", routes![get_user])
         .mount("/", routes![delete_user])
         .mount("/", routes![get_all_users])
-        .mount("/", routes![add_expedition_to_organizator, add_expedition_to_user])
+        // .mount("/", routes![add_expedition_to_organizator, add_expedition_to_user])
+        .mount("/", routes![add_expedition_to_user])
 }

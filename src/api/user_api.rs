@@ -73,7 +73,8 @@ pub fn get_all_users(db: &State<MongoRepo>) -> Result<Json<Vec<User>>, Status> {
     }
 }
 
-#[post("/user/<path>", data = "<new_expedition>")]
+// imo tak się tego nie powinno robić
+/*#[post("/user/<path>", data = "<new_expedition>")]
 pub fn add_expedition_to_organizator(
     db: &State<MongoRepo>,
     path: String,
@@ -87,7 +88,7 @@ pub fn add_expedition_to_organizator(
         Ok(user) => Ok(Json(user)),
         Err(_) => Err(Status::InternalServerError),
     }
-}
+}*/
 
 #[get("/signup")]
 pub fn signup_page(flash: Option<FlashMessage<'_>>) -> Template {

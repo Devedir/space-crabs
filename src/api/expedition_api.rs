@@ -16,10 +16,17 @@ pub fn create_expedition(
 
     let expedition: Expedition = new_expedition.into_inner(); //change from Json<Expedition> to Expedition
     let expedition_detail = db.create_expedition(expedition);
-    match expedition_detail {
+    let result = match expedition_detail {
         Ok(expedition) => Ok(Json(expedition)),
         Err(_) => Err(Status::InternalServerError),
-    }
+    };
+
+    db.add_expedition_to_organizator(
+        expedition.organizer.expect("Organiser not provided!").org_id,
+        expedition
+    );
+
+    result
 }
 
 
