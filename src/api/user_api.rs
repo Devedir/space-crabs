@@ -200,5 +200,5 @@ fn login_error() -> Flash<Redirect> {
 fn set_user_cookies(cookies: &CookieJar<'_>, user: User) {
     cookies.add(Cookie::new("user_id", user.id.unwrap().to_hex()));
     cookies.add(Cookie::new("login", user.login));
-    cookies.add(Cookie::new("roles", user.role.join(", ")));
+    cookies.add(Cookie::new("roles", user.role.join(",")));
 }
