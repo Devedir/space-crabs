@@ -13,7 +13,9 @@
         <nav>
             <a href="/expeditions"><h4 class="nav-element">Ekspedycje</h4></a>
             <a href="/users"><h4 class="nav-element">Użytkowicy</h4></a>
+            <a href="/raports/contacts"><h4 class = "nav-element">Raport kontaktów</h4></a>
             <a href="/login"><h4 class="nav-element">Moje konto</h4></a>
+            
         </nav>
     </header>
     <div class="content-header">
