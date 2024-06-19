@@ -1,8 +1,5 @@
 use std::collections::HashMap;
 
-extern crate tera;
-use tera::{Result as TeraResult, Value};
-
 use crate::{
     models::{expedition_model::Expedition, user_model::{User, UserForm, ApiUser}},
     repository::mongodb_repo::MongoRepo
@@ -36,7 +33,7 @@ pub fn create_user(
 pub fn get_user(
     db: &State<MongoRepo>,
     path: String
-) -> Result<Json<User>, Status> {
+) -> Result<Template, Status> {
 
     let id = path;
     if id.is_empty() {
@@ -44,7 +41,11 @@ pub fn get_user(
     };
     let user_detail = db.get_user(&id);
     match user_detail {
-        Ok(user) => Ok(Json(user)),
+        Ok(user) => {
+            let mut context = HashMap::new();
+            context.insert("user", user);
+            Ok(Template::render("user", &context))
+        },
         Err(_) => Err(Status::InternalServerError),
     }
 }

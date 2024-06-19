@@ -17,7 +17,7 @@
         </nav>
     </header>
     <main>
-        <h2 id="users-header">Wszyscy użytkowicy</h2>
+        <h2 class="content-header">Wszyscy użytkowicy</h2>
         {% for entry in api_users %}
         {% if loop.index is odd %}
         <div class="user odd">

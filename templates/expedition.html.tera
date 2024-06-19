@@ -16,7 +16,7 @@
             <a href="/login"><h4 class="nav-element">Moje konto</h4></a>
         </nav>
     </header>
-    <div id="name-header">
+    <div class="content-header">
         <span id="header-label">Detale ekspedycji</span><br>
         <h2>&lt;&lt; <em>{{ expedition.name }}</em> &gt;&gt;</h2>
     </div>

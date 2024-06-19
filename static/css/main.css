@@ -65,6 +65,11 @@ header {
     text-align: center;
 }
 
+.content-header {
+    text-align: center;
+    margin: 2% 0;
+}
+
 nav {
     flex: 4;
     display: flex;
