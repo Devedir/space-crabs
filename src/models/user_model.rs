@@ -47,3 +47,10 @@ pub struct ApiUser {
     pub str_id: String,
     pub user: User
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct ContactOrganizator{
+    pub expedition_name: String,
+    pub organizer_name: String,
+    pub contact: String
+}
