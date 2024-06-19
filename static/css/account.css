@@ -1,0 +1,119 @@
+#header-label {
+    font-size: 2.369rem;
+}
+
+#details {
+    max-width: 50%;
+    padding: 15px 25px;
+    margin: 25px auto;
+    border-radius: 10px;
+    background-color: var(--primary20);
+    font-size: 1.5rem;
+}
+
+.exp {
+    position: relative;
+    max-width: 50%;
+    padding: 15px 25px;
+    margin: 15px auto;
+    border-radius: 10px;
+    transition: all .2s;
+}
+
+.exp::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.odd {
+    background-color: var(--primary20);
+}
+
+.odd:hover {
+    background-color: var(--primary30);
+}
+
+.even {
+    background-color: var(--secondary20);
+}
+
+.even:hover {
+    background-color: var(--secondary30);
+}
+
+.desc {
+    float: left;
+}
+
+#main-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1%;
+}
+
+.main-button {
+    padding: 15px 25px;
+    border-radius: 10px;
+    margin: 0 50px;
+    font-size: 1.5rem;
+    transition: all ease .2s;
+}
+
+.primary {
+    background-color: var(--primary80);
+    color: var(--background);
+}
+
+.secondary {
+    background-color: var(--secondary50);
+}
+
+#logout {
+    cursor: pointer;
+}
+
+.main-button:hover, .exp-button:hover {
+    transform: translate(0, -3px);
+}
+
+.exp-button {
+    padding: 15px 25px;
+    border-radius: 10px;
+    margin: 0 50px;
+    font-size: 1.5rem;
+    transition: all ease .2s;
+}
+
+.exp-button:hover {
+    transform: translate(0, -3px);
+}
+
+.exp-buttons {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translate(0, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    float: right;
+}
+
+.b-odd {
+    background-color: var(--secondary);
+}
+
+.b-even {
+    background-color: var(--primary);
+    color: black;
+}
+
+.b-odd:hover {
+    box-shadow: 0 20px 80px 0 var(--secondary);
+}
+
+.b-even:hover {
+    box-shadow: 0 20px 80px -10px var(--primary);
+}

@@ -13,7 +13,9 @@
         <a href="/" id="title"><h1>Space Crabs</h1></a>
         <nav>
             <a href="/expeditions"><h4 class="nav-element">Ekspedycje</h4></a>
-            <a href="/users"><h4 class="nav-element">Użytkowicy</h4></a>
+            <a href="/users" id="users-anchor" hidden>
+                <h4 class="nav-element">Użytkowicy</h4>
+            </a>
             <a href="/login" id="account-anchor">
                 <h4 class="nav-element" id="account-header">----------</h4>
             </a>
