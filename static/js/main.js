@@ -8,6 +8,7 @@ for (let cookie of cookies_array) {
 if (cookies.has("user_id")) {
     document.getElementById("account-anchor").setAttribute("href", "/account")
     document.getElementById("account-header").innerHTML = "Moje konto"
+    document.getElementById("users-anchor").removeAttribute("hidden")
 } else {
     document.getElementById("account-header").innerHTML = "Zaloguj się"
 }
