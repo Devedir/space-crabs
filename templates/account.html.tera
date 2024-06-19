@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/account.css">
+    <script src="/js/main.js" defer></script>
+    <script src="/js/account.js"></script>
+    <title>{{ user.login }}</title>
+</head>
+<body>
+    <header>
+        <a href="/" id="title"><h1>Space Crabs</h1></a>
+        <nav>
+            <a href="/expeditions"><h4 class="nav-element">Ekspedycje</h4></a>
+            <a href="/users" id="users-anchor" hidden>
+                <h4 class="nav-element">Użytkowicy</h4>
+            </a>
+            <a href="/login" id="account-anchor">
+                <h4 class="nav-element" id="account-header">----------</h4>
+            </a>
+        </nav>
+    </header>
+    <div class="content-header">
+        <span id="header-label">Detale użytkownika</span><br>
+        <h2>&lt;&lt; <em>{{ user.login }}</em> &gt;&gt;</h2>
+    </div>
+    <section id="details">
+        <strong>Rola:</strong>
+        {% for r in user.role %}
+            {{ r }} 
+        {% endfor %}
+        <br>
+        {% if user.firstname is defined %}
+        <strong>Imię:</strong> {{ user.firstname }}<br>
+        {% endif %}
+        {% if user.lastname is defined %}
+        <strong>Nazwisko:</strong> {{ user.lastname }}<br>
+        {% endif %}
+        {% if user.company_name is defined %}
+        <strong>Nazwa firmy:</strong> {{ user.company_name }}<br>
+        {% endif %}
+        {% if user.contact is defined %}
+        <strong>Kontakt:</strong> {{ user.contact }}<br>
+        {% endif %}
+    </section>
+    <div id="main-buttons">
+        <div class="main-button primary">Edytuj</div>
+        <div class="main-button secondary" id="logout" onclick="logout()">
+            Wyloguj się
+        </div>
+    </div>
+
+    {% if user.my_expeditions is defined %}
+    <h2 class="content-header">Moje ekspedycje</h2>
+    <section id="exp-list">
+        {% for exp in user.my_expeditions %}
+        {% if loop.index is odd %}
+        <div class="exp odd">
+        {% else %}
+        <div class="exp even">
+        {% endif %}
+            <div class="desc">
+                <h3>{{ exp.name }}</h3>
+                <p>
+                    <strong>Data startu: </strong>{{ exp.start_date }}<br>
+                    {% if exp.reserved is defined %}
+                    <strong>Zarezerwowane: </strong>
+                    {% if exp.reserved %}Tak{% else %}Nie{% endif %}<br>
+                    {% endif %}
+                    {% if exp.paid is defined %}
+                    <strong>Zapłacone: </strong>
+                    {% if exp.paid %}Tak{% else %}Nie{% endif %}<br>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="exp-buttons">
+                <a href="/expedition/{{ exp.exp_id }}">
+                    <div
+                    {% if loop.index is odd %}
+                    class="exp-button b-odd">
+                    {% else %}
+                    class="button b-even">
+                    {% endif %}
+                    Szczegóły
+                    </div>
+                </a>
+                <div
+                    {% if loop.index is odd %}
+                    class="exp-button b-odd">
+                    {% else %}
+                    class="button b-even">
+                    {% endif %}
+                    Zrezygnuj
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+    {% endif %}
+
+    {% if user.organized_expeditions is defined %}
+    <h2 class="content-header">Organizowane ekspedycje</h2>
+    <section>
+        {% for exp in user.organized_expeditions %}
+        {% if loop.index is odd %}
+        <div class="exp odd">
+        {% else %}
+        <div class="exp even">
+        {% endif %}
+            <div class="desc">
+                <h3>{{ exp.name }}</h3>
+                <p>
+                    <strong>Data startu: </strong>{{ exp.start_date }}<br>
+                    {% if exp.reserved is defined %}
+                    <strong>Zarezerwowane: </strong>
+                    {% if exp.reserved %}Tak{% else %}Nie{% endif %}<br>
+                    {% endif %}
+                    {% if exp.payed is defined %}
+                    <strong>Zapłacone: </strong>
+                    {% if exp.payed %}Tak{% else %}Nie{% endif %}<br>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="exp-buttons">
+                <a href="/expedition/{{ exp.exp_id }}">
+                    <div
+                    {% if loop.index is odd %}
+                    class="exp-button b-odd">
+                    {% else %}
+                    class="button b-even">
+                    {% endif %}
+                    Szczegóły
+                    </div>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+    {% endif %}
+</body>
+</html>

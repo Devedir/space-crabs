@@ -13,6 +13,7 @@ use api::user_api::{
     // add_expedition_to_organizator,
     signup_page,create_account, login_page, verify_account
 };
+use api::other_apis::get_account;
 use repository::mongodb_repo::MongoRepo;
 use rocket::fs::FileServer;
 use rocket_dyn_templates::Template;
@@ -45,4 +46,5 @@ fn rocket() -> _ {
         .mount("/", routes![get_all_users])
         // .mount("/", routes![add_expedition_to_organizator, add_expedition_to_user])
         .mount("/", routes![add_expedition_to_user])
+        .mount("/", routes![get_account])
 }

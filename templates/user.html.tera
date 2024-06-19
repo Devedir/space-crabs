@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/user.css">
+    <script src="/js/main.js" defer></script>
     <title>Lista Użytkowników</title>
 </head>
 <body>
@@ -12,8 +13,12 @@
         <a href="/" id="title"><h1>Space Crabs</h1></a>
         <nav>
             <a href="/expeditions"><h4 class="nav-element">Ekspedycje</h4></a>
-            <a href="/users"><h4 class="nav-element">Użytkowicy</h4></a>
-            <a href="/login"><h4 class="nav-element">Moje konto</h4></a>
+            <a href="/users" id="users-anchor" hidden>
+                <h4 class="nav-element">Użytkowicy</h4>
+            </a>
+            <a href="/login" id="account-anchor">
+                <h4 class="nav-element" id="account-header">----------</h4>
+            </a>
         </nav>
     </header>
     <div class="content-header">
