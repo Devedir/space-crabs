@@ -10,9 +10,7 @@ use api::expedition_api::{
     get_all_expeditions, get_contact_raport,get_contact_raport_form, get_expedition
 };
 use api::user_api::{
-    create_user, get_user,get_all_users, delete_user,
-    // add_expedition_to_organizator,
-    signup_page, create_account, login_page, verify_account
+    create_account, create_user, delete_user, get_all_users, get_user, login_page, mark_expedition_as_paid, signup_page, verify_account
 };
 use api::other_apis::get_account;
 use repository::mongodb_repo::MongoRepo;
@@ -46,6 +44,6 @@ fn rocket() -> _ {
         .mount("/", routes![delete_user])
         .mount("/", routes![get_all_users])
         // .mount("/", routes![add_expedition_to_organizator, add_expedition_to_user])
-        .mount("/", routes![add_expedition_to_user])
+        .mount("/", routes![add_expedition_to_user,mark_expedition_as_paid])
         .mount("/", routes![get_account])
 }

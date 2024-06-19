@@ -3,11 +3,11 @@ extern crate dotenv;
 use dotenv::dotenv;
 
 use mongodb::{
-    bson::{self, bson, doc, extjson::de::Error, oid::ObjectId,Document},
+    bson::{ doc, extjson::de::Error, oid::ObjectId},
     results::{DeleteResult, InsertOneResult, UpdateResult},
     sync::{Client, Collection},
 };
-use crate::models::{expedition_model::{Expedition, Organizer}, user_model::ContactOrganizator};
+use crate::models::{expedition_model::Expedition, user_model::ContactOrganizator};
 use crate::models::user_model::User;
 
 

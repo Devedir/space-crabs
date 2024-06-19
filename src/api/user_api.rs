@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap};
 
 use crate::{
     models::{expedition_model::Expedition, user_model::{User, UserForm, ApiUser}},
@@ -13,6 +13,7 @@ use rocket::{
 };
 use rocket_dyn_templates::Template;
 use rocket_dyn_templates::serde::json::json;
+
 
 
 #[post("/user", data = "<new_user>")]
@@ -91,22 +92,15 @@ pub fn get_all_users(db: &State<MongoRepo>) -> Result<Template, Status> {
     }
 }
 
-// imo tak się tego nie powinno robić
-/*#[post("/user/<path>", data = "<new_expedition>")]
-pub fn add_expedition_to_organizator(
-    db: &State<MongoRepo>,
-    path: String,
-    new_expedition: Json<Expedition>
-) -> Result<Json<UpdateResult>, Status> {
-
-    let user_id = path;
-    let expedition: Expedition = new_expedition.into_inner();
-    let result = db.add_expedition_to_organizator(&user_id, expedition);
-    match result {
-        Ok(user) => Ok(Json(user)),
-        Err(_) => Err(Status::InternalServerError),
+#[post("/user/paid/<expedition_id>/<user_id>")]
+pub fn mark_expedition_as_paid(db: &State<MongoRepo>,expedition_id:String,user_id:String) -> Result<Json<UpdateResult>, Status> {
+    let result = db.mark_expedition_as_paid(&expedition_id, &user_id);
+    match result{
+        Ok(res) => Ok(Json(res)),
+        Err(_) =>Err(Status::InternalServerError),
     }
-}*/
+}
+
 
 #[get("/signup")]
 pub fn signup_page(flash: Option<FlashMessage<'_>>) -> Template {
