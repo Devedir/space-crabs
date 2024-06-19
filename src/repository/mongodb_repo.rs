@@ -126,11 +126,14 @@ impl MongoRepo {
             Err(err) => return Err(err),
         };
 
+        if expedition_detail.participants.len() == expedition_detail.max_no_participants as usize {
+            panic!("Max number of participants reached!");
+        }
+
         let user_detail = match self.get_user(user_id) {
             Ok(user) => user,
             Err(err) => return Err(err),
         };
-
 
         let new_user_doc = doc! {
             "$push": {
