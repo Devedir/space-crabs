@@ -122,16 +122,15 @@ pub fn get_all_expeditions(db: &State<MongoRepo>) -> Result<Template, Status> {
     }
 }
 
-#[post("/expedition/<path>", data = "<data>")]
+#[post("/expedition/<path>", data = "<user_id>")]
 pub fn add_expedition_to_user(
     db: &State<MongoRepo>,
     path: String,
-    data: String
+    user_id: String
 ) -> Result<Json<Expedition>, Status> {
 
     let expedition_id = path;
-    let user_id = data;
-    let result = db.add_expedition_to_user(&user_id,&expedition_id);
+    let result = db.add_expedition_to_user(&user_id, &expedition_id);
     match result {
         Ok(update) => {
             if update.matched_count == 1 {

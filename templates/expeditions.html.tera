@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista Ekspedycji</title>
+
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/expeditions.css">
+    
+    <script src="/js/cookies.js"></script>
     <script src="/js/main.js" defer></script>
-    <title>Lista Ekspedycji</title>
 </head>
 <body>
     <header>
@@ -47,7 +50,7 @@
             <h3>Uczestnicy</h3>
             <ul class="participants">
                 {% for participant in entry.expedition.participants %}
-                <li>{{ participant.firstname }} {{ participant.lastname }} (Opłacone: {% if participant.paid %}Tak{% else %}Nie{% endif %})</li>
+                <li>{{ participant.firstname }} {{ participant.lastname }}</li>
     
                 {% endfor %}
             </ul>

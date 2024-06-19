@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.login }}</title>
+
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/account.css">
+
+    <script src="/js/cookies.js"></script>
     <script src="/js/main.js" defer></script>
     <script src="/js/account.js"></script>
-    <title>{{ user.login }}</title>
 </head>
 <body>
     <header>

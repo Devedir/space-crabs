@@ -6,12 +6,13 @@ mod repository;
 extern crate argon2;
 
 use api::expedition_api::{
-    add_expedition_to_user, create_expedition, delete_expedition, get_all_expeditions, get_contact_raport,get_contact_raport_form, get_expedition
+    add_expedition_to_user, create_expedition, delete_expedition,
+    get_all_expeditions, get_contact_raport,get_contact_raport_form, get_expedition
 };
 use api::user_api::{
     create_user, get_user,get_all_users, delete_user,
     // add_expedition_to_organizator,
-    signup_page,create_account, login_page, verify_account
+    signup_page, create_account, login_page, verify_account
 };
 use api::other_apis::get_account;
 use repository::mongodb_repo::MongoRepo;
@@ -39,7 +40,7 @@ fn rocket() -> _ {
         .mount("/", routes![get_expedition])
         // .mount("/", routes![update_expedition])
         .mount("/", routes![delete_expedition])
-        .mount("/", routes![get_all_expeditions,get_contact_raport,get_contact_raport_form])
+        .mount("/", routes![get_all_expeditions, get_contact_raport, get_contact_raport_form])
         .mount("/", routes![create_user])
         .mount("/", routes![get_user])
         .mount("/", routes![delete_user])
