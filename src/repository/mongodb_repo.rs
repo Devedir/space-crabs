@@ -3,11 +3,11 @@ extern crate dotenv;
 use dotenv::dotenv;
 
 use mongodb::{
-    bson::{extjson::de::Error, oid::ObjectId, doc},
-    results::{InsertOneResult, UpdateResult, DeleteResult},
+    bson::{self, bson, doc, extjson::de::Error, oid::ObjectId,Document},
+    results::{DeleteResult, InsertOneResult, UpdateResult},
     sync::{Client, Collection},
 };
-use crate::models::expedition_model::{Expedition, Organizer};
+use crate::models::{expedition_model::{Expedition, Organizer}, user_model::ContactOrganizator};
 use crate::models::user_model::User;
 
 
@@ -423,5 +423,59 @@ impl MongoRepo {
             .ok()
             .expect("Error finding user");
         Ok(stored_user.unwrap())
+    }
+
+    pub fn get_contacts(&self, stop: &String) -> Result<Vec<ContactOrganizator>,Error>{
+        let contact_pipeline = vec![
+        doc! {
+            "$match": {
+              "stops": stop
+            }
+          },
+          doc! {
+            "$lookup": {
+              "from": "users",
+              "let": { "orgId": { "$toObjectId": "$organizer.org_id" } },
+              "pipeline": [
+                {
+                  "$match": {
+                    "$expr": { "$eq": ["$_id", "$$orgId"] }
+                  }
+                }
+              ],
+              "as": "organizer_details"
+            }
+        },
+          doc! {
+            "$unwind": "$organizer_details"
+          },
+          doc! {
+            "$project": {
+              "_id": 0,
+              "expedition_name": "$name",
+              "organizer_name": "$organizer_details.login",
+              "contact": "$organizer_details.contact"
+            }
+          }
+];
+let cursors = self
+            .expedition_col
+            .aggregate(contact_pipeline, None)
+            .ok()
+            .expect("Error getting list of contacts");
+        let results: Result<Vec<ContactOrganizator>, Error> = cursors.map(|doc| {
+
+            let expedition_name = doc.clone().unwrap().get_str("expedition_name").unwrap_or("").to_string();
+            let organizer_name = doc.clone().unwrap().get_str("organizer_name").unwrap_or("").to_string();
+            let contact = doc.clone().unwrap().get_str("contact").unwrap_or("").to_string();
+
+            Ok(ContactOrganizator {
+                expedition_name,
+                organizer_name,
+                contact,
+            })
+        }).collect();
+
+        results
     }
 }

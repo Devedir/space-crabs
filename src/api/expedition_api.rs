@@ -1,11 +1,11 @@
 use std::collections::HashMap;
 
 use crate::{
-    models::expedition_model::{Expedition, ApiExpedition},
+    models::{expedition_model::{ApiExpedition, Expedition}, user_model::ContactOrganizator},
     repository::mongodb_repo::MongoRepo
 };
 use mongodb::results::InsertOneResult;
-use rocket::{http::Status, serde::json::Json, State};
+use rocket::{form::Form,http::Status, serde::json::Json, State};
 use rocket_dyn_templates::Template;
 
 #[post("/expedition", data = "<new_expedition>")]
@@ -145,5 +145,27 @@ pub fn add_expedition_to_user(
             }
         }
         Err(_) => Err(Status::InternalServerError),
+    }
+}
+
+#[get("/raports/contacts")]
+pub fn get_contact_raport_form() -> Template {
+    let context: HashMap<String, Vec<ContactOrganizator>> = HashMap::new();
+    Template::render("contacts", &context)
+}
+
+#[post("/raports/contacts", data = "<stop_form>")]
+pub fn get_contact_raport(
+    db: &State<MongoRepo>,
+    stop_form: Form<HashMap<String, String>>
+) -> Result<Template, Status> {
+    let stop = stop_form.get("stop").cloned().unwrap_or_default();
+    match db.get_contacts(&stop) {
+        Ok(contacts) => {
+            let mut context = HashMap::new();
+            context.insert("contacts", contacts);
+            Ok(Template::render("contacts", &context))
+        },
+        Err(_) => Err(Status::InternalServerError)
     }
 }

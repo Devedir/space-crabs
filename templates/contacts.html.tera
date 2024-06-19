@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Raport kontaktów</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/expeditions.css">
+</head>
+<body>
+    <header><nav>
+        <a href="/expeditions"><h4 class="nav-element">Ekspedycje</h4></a>
+        <a href="/users"><h4 class="nav-element">Użytkowicy</h4></a>
+        <a href="/raports/contacts"><h4 class = "nav-element">Raport kontaktów</h4></a>
+        <a href="/login"><h4 class="nav-element">Moje konto</h4></a>
+        
+    </nav></header>
+    <h1>Raport kontaktów</h1>
+    <form action="/raports/contacts" method="post">
+        <label for="stop">Stop:</label>
+        <input type="text" id="stop" name="stop">
+        <button type="submit">Search</button>
+    </form>
+    <div class="expedition-list">
+        {% if contacts %}
+            {% for contact_el in contacts %}
+                <div class="expedition">
+                    <h3>Contact: {{ contact_el.contact }}</h3>
+                    <p><strong>Expedition Name: </strong>{{ contact_el.expedition_name }}</p>
+                    <p><strong>Organizer Name:</strong> {{ contact_el.organizer_name }}</p>
+
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No contacts found.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

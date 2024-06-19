@@ -24,3 +24,18 @@
     list-style-type: none;
     padding-left: 0;
 }
+form {
+    margin: 20px 0;
+}
+
+form label, form input, form button {
+    font-size: 1rem;
+}
+
+form input, form button {
+    padding: 5px;
+    margin: 0 5px;
+}
+body{
+    justify-content: center;
+}
