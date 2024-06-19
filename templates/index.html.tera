@@ -43,5 +43,8 @@
         <img src="img/landing.png" alt="Landing page image">
     </div>
     <h1 id="motto">LET'S<br>GET<br><span class="font-effect">STARTED</span></h1>
+
+    <!-- Na potrzeby testowania ciasteczek -->
+    <button type="button" onclick="alert(document.cookie)">Wyświetl ciastka</button>
 </body>
 </html>

@@ -188,7 +188,7 @@ pub fn verify_account(db: &State<MongoRepo>, cookies: & CookieJar<'_>, user_form
         return login_error();
     }
 
-    set_user_id_cookie(cookies, stored_user.id.unwrap());
+    set_user_cookies(cookies, stored_user);
     Flash::success(Redirect::to("/"), "Logged in successfully!")
 }
 
@@ -197,6 +197,8 @@ fn login_error() -> Flash<Redirect> {
 }
 
 
-fn set_user_id_cookie(cookies: &CookieJar<'_>, user_id: bson::oid::ObjectId) {
-    cookies.add_private(Cookie::new("user_id", user_id.to_hex()));
+fn set_user_cookies(cookies: &CookieJar<'_>, user: User) {
+    cookies.add(Cookie::new("user_id", user.id.unwrap().to_hex()));
+    cookies.add(Cookie::new("login", user.login));
+    cookies.add(Cookie::new("roles", user.role.join(", ")));
 }
