@@ -10,6 +10,7 @@
 
     <script src="/js/cookies.js"></script>
     <script src="/js/main.js" defer></script>
+    <script src="/js/users.js"></script>
 </head>
 <body>
     <header>
@@ -65,7 +66,7 @@
                     Szczegóły
                     </div>
                 </a>
-                <div
+                <div onclick="delete_user(&quot;{{ entry.str_id }}&quot;)"
                     {% if loop.index is odd %}
                     class="button b-odd">
                     {% else %}

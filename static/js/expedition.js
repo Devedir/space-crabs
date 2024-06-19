@@ -1,5 +1,5 @@
-function signup() {
-    fetch(location.href, {
+async function signup() {
+    let response = await fetch(location.href, {
         method: "POST",
         body: cookies.get("user_id"),
         headers: {
