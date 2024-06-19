@@ -11,6 +11,8 @@
     --primary20: rgba(131, 145, 237, 20%);
     --primary30: rgba(131, 145, 237, 30%);
     --primary80: rgba(131, 145, 237, 80%);
+    --secondary20: rgba(211, 56, 71, 20%);
+    --secondary30: rgba(211, 56, 71, 30%);
     --secondary50: rgba(211, 56, 71, 50%);
 }
 

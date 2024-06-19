@@ -1,11 +1,19 @@
+use std::collections::HashMap;
+
+extern crate tera;
+use tera::{Result as TeraResult, Value};
+
 use crate::{
-    models::{expedition_model::Expedition, user_model::{User, UserForm}},
+    models::{expedition_model::Expedition, user_model::{User, UserForm, ApiUser}},
     repository::mongodb_repo::MongoRepo
 };
 // use argon2::Config;
 use rocket::{form::Form, http::{Cookie, CookieJar}};
 use mongodb::{bson, results::{InsertOneResult, UpdateResult}};
-use rocket::{http::Status, request::FlashMessage, response::{Flash, Redirect}, serde::json:: Json, State};
+use rocket::{
+    http::Status, request::FlashMessage,
+    response::{Flash, Redirect}, serde::json::Json, State
+};
 use rocket_dyn_templates::Template;
 use rocket_dyn_templates::serde::json::json;
 
@@ -65,10 +73,19 @@ pub fn delete_user(
 }
 
 #[get("/users")]
-pub fn get_all_users(db: &State<MongoRepo>) -> Result<Json<Vec<User>>, Status> {
-    let user = db.get_all_users();
-    match user {
-        Ok(user) => Ok(Json(user)),
+pub fn get_all_users(db: &State<MongoRepo>) -> Result<Template, Status> {
+    let maybe_users = db.get_all_users();
+    match maybe_users {
+        Ok(users) => {
+            let api_users: Vec<ApiUser> = users.iter()
+                .map(|usr| ApiUser {
+                    str_id: usr.id.unwrap().to_hex(),
+                    user: usr.clone()
+                }).collect();
+            let mut context = HashMap::new();
+            context.insert("api_users", api_users);
+            Ok(Template::render("users", &context))
+        },
         Err(_) => Err(Status::InternalServerError),
     }
 }

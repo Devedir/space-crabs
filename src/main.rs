@@ -11,7 +11,8 @@ use api::expedition_api::{
 };
 use api::user_api::{
     create_user, get_user,get_all_users, delete_user,
-    add_expedition_to_organizator, signup_page,create_account, login_page, verify_account
+    // add_expedition_to_organizator,
+    signup_page,create_account, login_page, verify_account
 };
 use repository::mongodb_repo::MongoRepo;
 use rocket::fs::FileServer;
