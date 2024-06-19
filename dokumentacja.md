@@ -48,7 +48,7 @@ Dodatkowo w zależności od tego jaką rolę będzie miał użytkownik takie dod
 1.  participant
 	- [firstname] - imie
 	- [lastname] - nazwisko
-	- [p_expeditions] - ekspedycje, na które zapisany jest użytkownik. Każda ekspedycja jest obiektem o następujących polach:
+	- [my_expeditions] - ekspedycje, na które zapisany jest użytkownik. Każda ekspedycja jest obiektem o następujących polach:
 		- [exp_id]
 		- [name] - nazwa eksedycji
 		- [start_date] - data rozpoczęcia
@@ -57,7 +57,7 @@ Dodatkowo w zależności od tego jaką rolę będzie miał użytkownik takie dod
 2. organizer
 	- [company_name] - nazwa firmy, z którą powiązany jest użytkownik
 	- [contact] - numer kontaktowy
-	- [o_expeditions] - ekspedycje, którą są organizowane przez danego użytkownika. Każda ekspedycja jest obiektem o następujących polach:
+	- [organized_expeditions] - ekspedycje, którą są organizowane przez danego użytkownika. Każda ekspedycja jest obiektem o następujących polach:
 		- [exp_id]
 		- [name] - nazwa eksedycji
 		- [start_date] - data rozpoczęcia
@@ -72,27 +72,24 @@ Przykładowe dokumenty z kolekcji _users_:
 ```json
 {
   "_id": {
-    "$oid": "661e363d2e1f19d1b89964b3"
+    "$oid": "665dc57f329cd9bc49872586"
   },
-  "login": "ala",
-  "password": "makota",
-  "role": ["participant"],
-  "firstname": "Ala",
-  "lastname": "Niemakota",
-  "p_expeditions": [
+  "login": "graceDavis",
+  "password": "davisGrace444",
+  "role": [
+    "participant"
+  ],
+  "firstname": "Grace",
+  "lastname": "Davis",
+  "my_expeditions": [
     {
-      "exp_id": "exp_id",
-	  "name": "exp_name",
-	  "start_date":2400,
+      "exp_id": "665dbcd0e0843652d2629235",
+      "name": "Stellaris",
+      "start_date": {
+        "$numberLong": "2464"
+      },
       "reserved": false,
       "paid": false
-    },
-    {
-      "exp_id": "exp_id2",
-	  "name": "exp_name",
-	  "start_date":2401,
-      "reserved": true,
-      "paid": true
     }
   ]
 }
@@ -113,25 +110,24 @@ Przykładowe dokumenty z kolekcji _users_:
 ```json
 {
   "_id": {
-    "$oid": "661e39152e1f19d1b89964b5"
+    "$oid": "665d9cce329cd9bc4987252b"
   },
-  "login": "ola",
-  "password": "mapsa",
-  "role": ["organizer"],
-  "company_name": "Olamakonia",
-  "contact": "999-999-999",
-  "o_expeditions": [
+  "login": "peterParker",
+  "password": "spideyPass456",
+  "role": [
+    "organizer"
+  ],
+  "company_name": "ExpeditionExtreme",
+  "organized_expeditions": [
     {
-      "exp_id": "exp_id1",
-	  "name": "exp_name1",
-	  "start_date":2400
-    },
-    {
-      "exp_id": "exp_id2",
-	  "name": "exp_name",
-	  "start_date":2401
+      "exp_id": "665dbfaae0843652d2629242",
+      "name": "Galactic Trail",
+      "start_date": {
+        "$numberLong": "2472"
+      }
     }
-  ]
+  ],
+  "contact": "345-678-901"
 }
 ```
 
@@ -180,10 +176,7 @@ Kolekcja ta zawiera informacje na temat ekspedycji
 Każdy z dokumentów zawiera następujące pola:
 - [_id]
 - [name] - nazwa ekspedycji
-- [stops] - lista przystanków podczas ekspedycji. Każdy przystanek jest obiektem o następujących polach:
-	- [name] - nazwa przystanku
-	- [arrival_time] - czas przylotu
-	- [departure_time] - czas odlotu
+- [stops] - lista przystanków podczas ekspedycji.
 - [max_no_participants] - maksymalna liczba uczestninków
 - [guide] - dane przewodnika 
 	- [firstname]
@@ -191,7 +184,7 @@ Każdy z dokumentów zawiera następujące pola:
 	- [age]
 	- [experience]
 - [organizer] - dane organizatora
-	- [user_id] 
+	- [org_id] 
 	- [company_name]
 - [start_time] - czas rozpoczęcia 
 - [end_time] - czas zakończenia
@@ -208,56 +201,53 @@ Przykładowe dokumenty z kolekcji _expeditions_:
 
 ```json
 {
+  {
   "_id": {
-    "$oid": "661e3a7d2e1f19d1b89964bb"
+    "$oid": "665dbcd0e0843652d2629235"
   },
-  "name": "AAA",
+  "name": "Stellaris",
   "stops": [
-    {
-      "name": "Pluto",
-      "arrival_time": 2450,
-      "departure_time": 2451,
-    },
-    {
-      "name": "Proxima Centauri",
-      "arrival_time": 2452,
-      "departure_time": 2453,
-    },
-    {
-      "name": "Earth",
-      "arrival_time": 2455,
-      "departure_time": 2456,
-    }
+    "Venus",
+    "Alpha Centauri",
+    "Jupiter"
   ],
-  "max_no_participants": 200,
+  "max_no_participants": {
+    "$numberLong": "150"
+  },
   "guide": {
-    "firstname": "Tam",
-    "lastname": "Rusty",
-    "age": 8,
-    "experience": "Capitan"
+    "firstname": "Elara",
+    "lastname": "Nova",
+    "age": {
+      "$numberLong": "32"
+    },
+    "experience": "Navigator"
   },
   "organizer": {
-	"user_id":"1234567890",
-	"company_name":"Crunchy Cola"
-  }, 
-  "start_time": 2449,
-  "end_time": 2460,
-  "home_station": "Mars",
+    "org_id": "665d9cce329cd9bc49872537",
+    "name": "GuardiansTravels"
+  },
+  "start_time": {
+    "$numberLong": "2464"
+  },
+  "end_time": {
+    "$numberLong": "2473"
+  },
+  "home_station": "Luna Base",
   "participants": [
-	{
-		"user_id":"345678",
-		"firstname":"Ala",
-		"lastname": "makota",
-		"paid":false
-	}
-		{
-		"user_id":"345678",
-		"firstname":"Lorem",
-		"lastname": "Ipsum",
-		"paid":true
-	}
+    {
+      "user_id": "665dc57f329cd9bc49872586",
+      "firstname": "Grace",
+      "lastname": "Davis",
+      "paid": false
+    }
   ],
-  "price": 132222
+  "price": {
+    "$numberLong": "15000"
+  }
+}
 }
 ```
+
+
+
 
