@@ -49,6 +49,7 @@
     margin: 0 50px;
     font-size: 1.5rem;
     transition: all ease .2s;
+    cursor: pointer;
 }
 
 .button:hover {
