@@ -1,0 +1,26 @@
+.expedition-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.expedition {
+    padding: 15px;
+    margin: 15px;
+    border-radius: 10px;
+    background-color: var(--primary20);
+    transition: all .5s;
+}
+
+.expedition:hover {
+    background-color: var(--primary30);
+}
+
+.expedition h2 {
+    margin-top: 0;
+}
+
+.stops, .participants {
+    list-style-type: none;
+    padding-left: 0;
+}

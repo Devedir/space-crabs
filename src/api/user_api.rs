@@ -1,11 +1,16 @@
+use std::collections::HashMap;
+
 use crate::{
-    models::{expedition_model::Expedition, user_model::{User, UserForm}},
+    models::{expedition_model::Expedition, user_model::{User, UserForm, ApiUser}},
     repository::mongodb_repo::MongoRepo
 };
 // use argon2::Config;
 use rocket::{form::Form, http::{Cookie, CookieJar}};
-use mongodb::{bson, results::{InsertOneResult,UpdateResult}};
-use rocket::{http::Status, request::FlashMessage, response::{Flash, Redirect}, serde::json:: Json, State};
+use mongodb::{bson, results::{InsertOneResult, UpdateResult}};
+use rocket::{
+    http::Status, request::FlashMessage,
+    response::{Flash, Redirect}, serde::json::Json, State
+};
 use rocket_dyn_templates::Template;
 use rocket_dyn_templates::serde::json::json;
 
@@ -28,7 +33,7 @@ pub fn create_user(
 pub fn get_user(
     db: &State<MongoRepo>,
     path: String
-) -> Result<Json<User>, Status> {
+) -> Result<Template, Status> {
 
     let id = path;
     if id.is_empty() {
@@ -36,7 +41,11 @@ pub fn get_user(
     };
     let user_detail = db.get_user(&id);
     match user_detail {
-        Ok(user) => Ok(Json(user)),
+        Ok(user) => {
+            let mut context = HashMap::new();
+            context.insert("user", user);
+            Ok(Template::render("user", &context))
+        },
         Err(_) => Err(Status::InternalServerError),
     }
 }
@@ -65,38 +74,48 @@ pub fn delete_user(
 }
 
 #[get("/users")]
-pub fn get_all_users(db: &State<MongoRepo>) -> Result<Json<Vec<User>>, Status> {
-    let user = db.get_all_users();
-    match user {
-        Ok(user) => Ok(Json(user)),
+pub fn get_all_users(db: &State<MongoRepo>) -> Result<Template, Status> {
+    let maybe_users = db.get_all_users();
+    match maybe_users {
+        Ok(users) => {
+            let api_users: Vec<ApiUser> = users.iter()
+                .map(|usr| ApiUser {
+                    str_id: usr.id.unwrap().to_hex(),
+                    user: usr.clone()
+                }).collect();
+            let mut context = HashMap::new();
+            context.insert("api_users", api_users);
+            Ok(Template::render("users", &context))
+        },
         Err(_) => Err(Status::InternalServerError),
     }
 }
 
-#[post("/user/<path>", data = "<new_expedition>")]
+// imo tak się tego nie powinno robić
+/*#[post("/user/<path>", data = "<new_expedition>")]
 pub fn add_expedition_to_organizator(
     db: &State<MongoRepo>,
     path: String,
     new_expedition: Json<Expedition>
 ) -> Result<Json<UpdateResult>, Status> {
 
-        let user_id = path;
-        let expedition: Expedition = new_expedition.into_inner();
-        let result = db.add_expedition_to_organizator(&user_id, expedition);
-        match result {
-            Ok(user) => Ok(Json(user)),
-            Err(_) => Err(Status::InternalServerError),
-        }
+    let user_id = path;
+    let expedition: Expedition = new_expedition.into_inner();
+    let result = db.add_expedition_to_organizator(&user_id, expedition);
+    match result {
+        Ok(user) => Ok(Json(user)),
+        Err(_) => Err(Status::InternalServerError),
     }
+}*/
 
- #[get("/signup")]
+#[get("/signup")]
 pub fn signup_page(flash: Option<FlashMessage<'_>>) -> Template {
-        Template::render(
-            "signup", 
-            json!({
-                "flash": flash.map(FlashMessage::into_inner)
-            })
-        )
+    Template::render(
+        "signup", 
+        json!({
+            "flash": flash.map(FlashMessage::into_inner)
+        })
+    )
 }
 
 
@@ -169,7 +188,7 @@ pub fn verify_account(db: &State<MongoRepo>, cookies: & CookieJar<'_>, user_form
         return login_error();
     }
 
-    set_user_id_cookie(cookies, stored_user.id.unwrap());
+    set_user_cookies(cookies, stored_user);
     Flash::success(Redirect::to("/"), "Logged in successfully!")
 }
 
@@ -178,6 +197,8 @@ fn login_error() -> Flash<Redirect> {
 }
 
 
-fn set_user_id_cookie(cookies: &CookieJar<'_>, user_id: bson::oid::ObjectId) {
-    cookies.add_private(Cookie::new("user_id", user_id.to_hex()));
+fn set_user_cookies(cookies: &CookieJar<'_>, user: User) {
+    cookies.add(Cookie::new("user_id", user.id.unwrap().to_hex()));
+    cookies.add(Cookie::new("login", user.login));
+    cookies.add(Cookie::new("roles", user.role.join(", ")));
 }

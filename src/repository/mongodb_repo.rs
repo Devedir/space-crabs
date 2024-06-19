@@ -70,21 +70,22 @@ impl MongoRepo {
     pub fn add_expedition_to_organizator(
         &self,
         user_id: &String,
-        mut new_expedition: Expedition
+        // mut new_expedition: Expedition
+        new_expedition: Expedition
     ) -> Result<UpdateResult, Error> {
 
-        if new_expedition.organizer == None {
-            let user_detail = match self.get_user(user_id) {
-                Ok(user) => user,
-                Err(err) => return Err(err),
-            };
-
-            let expedition_organizer = Organizer {
-                name: user_detail.company_name.unwrap(),
-                org_id: user_id.to_string(),
-            };
-            new_expedition.organizer = Some(expedition_organizer);
-        }
+        // if new_expedition.organizer == None {
+        //     let user_detail = match self.get_user(user_id) {
+        //         Ok(user) => user,
+        //         Err(err) => return Err(err),
+        //     };
+        //
+        //     let expedition_organizer = Organizer {
+        //         name: user_detail.company_name.expect("Not an organiser!"),
+        //         org_id: user_id.to_string(),
+        //     };
+        //     new_expedition.organizer = Some(expedition_organizer);
+        // }
 
         let expedition_id = match self.create_expedition(new_expedition.clone()){
             Ok(expedition) => expedition.inserted_id.as_object_id().unwrap().to_hex(),

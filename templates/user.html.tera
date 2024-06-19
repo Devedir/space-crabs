@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/user.css">
+    <title>Lista Użytkowników</title>
+</head>
+<body>
+    <header>
+        <a href="/" id="title"><h1>Space Crabs</h1></a>
+        <nav>
+            <a href="/expeditions"><h4 class="nav-element">Ekspedycje</h4></a>
+            <a href="/users"><h4 class="nav-element">Użytkowicy</h4></a>
+            <a href="/login"><h4 class="nav-element">Moje konto</h4></a>
+        </nav>
+    </header>
+    <div class="content-header">
+        <span id="header-label">Detale użytkownika</span><br>
+        <h2>&lt;&lt; <em>{{ user.login }}</em> &gt;&gt;</h2>
+    </div>
+    <main>
+        <strong>Rola:</strong>
+        {% for r in user.role %}
+            {{ r }} 
+        {% endfor %}
+        <br>
+        {% if user.firstname is defined %}
+        <strong>Imię:</strong> {{ user.firstname }}<br>
+        {% endif %}
+        {% if user.lastname is defined %}
+        <strong>Nazwisko:</strong> {{ user.lastname }}<br>
+        {% endif %}
+        {% if user.company_name is defined %}
+        <strong>Nazwa firmy:</strong> {{ user.company_name }}<br>
+        {% endif %}
+        {% if user.contact is defined %}
+        <strong>Kontakt:</strong> {{ user.contact }}<br>
+        {% endif %}
+    </main>
+    <div id="buttons">
+        <a href="/users"><div class="button secondary">Powrót</div></a>
+        <div class="button primary">Edytuj</div>
+        <div class="button secondary">Usuń</div>
+    </div>
+</body>
+</html>

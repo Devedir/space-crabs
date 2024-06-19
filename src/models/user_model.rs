@@ -3,7 +3,7 @@ use serde::{Serialize, Deserialize};
 
 // pub const USER_PASSWORD_SALT: &[u8] = b"nie wiem co ja tutaj robie";
 
-#[derive(Debug, Serialize, Deserialize)] //generate implementation support for formatting the output, serializing, and deserializing the data structure.
+#[derive(Debug, Serialize, Deserialize, Clone)] //generate implementation support for formatting the output, serializing, and deserializing the data structure.
 pub struct User {
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
     pub id: Option<ObjectId>,
@@ -38,6 +38,12 @@ pub struct MyExpedition {
 
 #[derive(FromForm)]
 pub struct UserForm {
-pub login:String,
-pub password:String,
+    pub login: String,
+    pub password: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct ApiUser {
+    pub str_id: String,
+    pub user: User
 }

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/users.css">
+    <title>Lista Użytkowników</title>
+</head>
+<body>
+    <header>
+        <a href="/" id="title"><h1>Space Crabs</h1></a>
+        <nav>
+            <a href="/expeditions"><h4 class="nav-element">Ekspedycje</h4></a>
+            <a href="/users"><h4 class="nav-element">Użytkowicy</h4></a>
+            <a href="/login"><h4 class="nav-element">Moje konto</h4></a>
+        </nav>
+    </header>
+    <main>
+        <h2 class="content-header">Wszyscy użytkowicy</h2>
+        {% for entry in api_users %}
+        {% if loop.index is odd %}
+        <div class="user odd">
+        {% else %}
+        <div class="user even">
+        {% endif %}
+            <div class="desc">
+                <h3>{{ entry.user.login }}</h3>
+                <p>
+                    <strong>Rola:</strong>
+                    {% for r in entry.user.role %}
+                        {{ r }} 
+                    {% endfor %}
+                    <br>
+                    {% if entry.user.firstname is defined %}
+                    <strong>Imię:</strong> {{ entry.user.firstname }}<br>
+                    {% endif %}
+                    {% if entry.user.lastname is defined %}
+                    <strong>Nazwisko:</strong> {{ entry.user.lastname }}<br>
+                    {% endif %}
+                    {% if entry.user.company_name is defined %}
+                    <strong>Nazwa firmy:</strong> {{ entry.user.company_name }}<br>
+                    {% endif %}
+                    {% if entry.user.contact is defined %}
+                    <strong>Kontakt:</strong> {{ entry.user.contact }}<br>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="buttons">
+                <a href="/user/{{ entry.str_id }}">
+                    <div
+                    {% if loop.index is odd %}
+                    class="button b-odd">
+                    {% else %}
+                    class="button b-even">
+                    {% endif %}
+                    Szczegóły
+                    </div>
+                </a>
+                <div
+                    {% if loop.index is odd %}
+                    class="button b-odd">
+                    {% else %}
+                    class="button b-even">
+                    {% endif %}
+                    Usuń
+                </div>
+                <div
+                    {% if loop.index is odd %}
+                    class="button b-odd">
+                    {% else %}
+                    class="button b-even">
+                    {% endif %}
+                    Edytuj
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </main>
+</body>
+</html>

@@ -1,0 +1,58 @@
+#header-label {
+    font-size: 2.369rem;
+}
+
+main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+section {
+    padding: 15px 25px;
+    margin: 25px;
+    border-radius: 10px;
+    background-color: var(--primary20);
+    font-size: 1.2rem;
+}
+
+section h2 {
+    margin-top: 0;
+}
+
+.stops, .participants {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+#buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1%;
+}
+
+.button {
+    padding: 15px 25px;
+    border-radius: 10px;
+    margin: 0 50px;
+    font-size: 1.5rem;
+    transition: all ease .2s;
+}
+
+.button:hover {
+    transform: translate(0, -3px);
+}
+
+.primary {
+    background-color: var(--primary80);
+    color: var(--background);
+}
+
+.primary:hover {
+    box-shadow: 0 20px 80px -10px var(--primary);
+}
+
+.secondary {
+    background-color: var(--secondary50);
+}
