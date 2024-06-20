@@ -51,6 +51,7 @@ Dodatkowo w zależności od tego jaką rolę będzie miał użytkownik takie dod
 		- [name] - nazwa eksedycji
 		- [start_date] - data rozpoczęcia
 		- [reserved] - status rezerwacji
+			- Z tego zrezygnowaliśmy, ale w bazie w "starych" `user`'ach to pole można zauważyć jako występujące. Nie wpływa to na funkcjonowanie systemu.
 		- [paid] - status opłacenia rezerwacji
 2. organizer
 	- [company_name] - nazwa firmy, z którą powiązany jest użytkownik

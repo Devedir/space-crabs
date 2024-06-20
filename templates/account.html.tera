@@ -135,7 +135,7 @@
                     {% if loop.index is odd %}
                     class="exp-button b-odd">
                     {% else %}
-                    class="button b-even">
+                    class="exp-button b-even">
                     {% endif %}
                     Szczegóły
                     </div>
